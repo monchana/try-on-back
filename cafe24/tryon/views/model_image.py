@@ -69,6 +69,7 @@ def model_image(request, id):
 
     # add model images
     elif request.method == 'POST':
+
         file = request.data['file']
         post = Models.objects.create(image=file)
         return HttpResponse(status=200)
@@ -93,6 +94,7 @@ def product_image(request):
     return JsonResponse(serializer_class.data, safe=False)
 
 
+# is this page necessary?
 @api_view(['GET'])
 def detail_page(request):
     try:
@@ -157,3 +159,8 @@ def layout_page(request):
     serializer = ModelSerializer(post)
     return JsonResponse(serializer.data, safe=False)
 
+
+# TODO : 상품 가등록 page
+@api_view(['POST'])
+def register_page(request):
+    return
