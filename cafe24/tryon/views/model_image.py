@@ -74,7 +74,7 @@ MODELIMGDIR = '/home/hsna/workspaces/try-on/try_on_image_dir/models'
 
 # access model_images
 @api_view(['GET', 'POST'])
-def model_image(request, id):
+def model_image(request):
     # return model images
     if request.method == 'GET':
         try:
@@ -88,7 +88,6 @@ def model_image(request, id):
 
     # add model images
     elif request.method == 'POST':
-
         file = request.data['file']
         post = Models.objects.create(image=file)
         return HttpResponse(status=200)
