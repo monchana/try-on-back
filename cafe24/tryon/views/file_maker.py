@@ -1,7 +1,6 @@
 import os
 from os.path import join as pjoin
 import ftplib
-import cv2
 
 
 '''
@@ -16,4 +15,5 @@ def send_image_ftp(images, shop_url, nickname, pwd):
 
     ftp.quit()
 
-def make_html(images, )
+def make_html(images):
+    return

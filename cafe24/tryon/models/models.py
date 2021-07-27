@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class Model(models.Model):
+class Models(models.Model):
     id = models.IntegerField(primary_key=True, blank=False)
     image = models.ImageField(blank=False, upload_to='models')
 

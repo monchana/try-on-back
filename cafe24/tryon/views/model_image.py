@@ -1,23 +1,23 @@
-from tryon.models import Model, Product, ProductNB, TemplatePage, TryOnImage
+from tryon.models import Models, Product, ProductNB, TemplatePage, TryOnImage
 from django.http import HttpResponse, JsonResponse
-from tryon.serializers import ModelSerializer, ProductSerializer, ProductNBSerializer, ADProductSerializer
-import urllib.request
+from rest_framework.decorators import api_view, permission_classes
+from tryon.serializers import ModelSerializer, ProductSerializer, ProductNBSerializer, TemplateSerializer, TryOnImageSerializer
+from drf_yasg.utils import swagger_auto_schema
 
+import urllib.request
 import os
-from os.path import pjoin
-import PIL
+from os.path import join as pjoin
+from PIL import Image
 import ftplib
 
-# 해당 파트는 성찬이 형의 모듈화 기다리는 중
-from '' import TryOnGenerator, TitleGnerator
-from '' import detect_bg, make_html
-
+# TODO : 해당 파트는 성찬이 형의 모듈화 기다리는 중
+# from '' import TryOnGenerator, TitleGnerator
+# from '' import detect_bg, make_html
+# TOG = TryOnGenerator()
+# TG = TitleGnerator()
 
 # Model Image BaseDir
 MODELIMGDIR = '/home/hsna/workspaces/try-on/try_on_image_dir/models'
-
-TOG = TryOnGenerator()
-TG = TitleGnerator()
 
 '''
     ViewSet과 일반 중에 어떤 게 좋을지 고민 중 
@@ -48,10 +48,29 @@ TG = TitleGnerator()
 #         image = Product.objects.create(image=file)
 #         return HttpResponse(json.dumps({'message': "Uploaded"}), status=200)
 
-
-
 ################################################
 
+@swagger_auto_schema(
+    method='get',
+    operation_id="Model Image View Get",
+    operation_description="Provide Model Images",
+    responses={
+        200: ModelSerializer,
+        404: "Not Found",
+    },
+    tags=['Model']
+)
+
+@swagger_auto_schema(
+    method='post',
+    operation_id="Model Image View Post",
+    operation_description="Save Model Images",
+    responses={
+        200: "Good",
+        404: "Not Found",
+    },
+    tags=['Model']
+)
 
 # access model_images
 @api_view(['GET', 'POST'])
@@ -74,6 +93,16 @@ def model_image(request, id):
         post = Models.objects.create(image=file)
         return HttpResponse(status=200)
 
+@swagger_auto_schema(
+    method='post',
+    operation_id="Product Image Post",
+    operation_description="Save Product Images",
+    responses={
+        200: ProductNBSerializer,
+        404: "Not Found",
+    },
+    tags=['Product']
+)
 
 # id를 생성해 줘야 하나?
 @api_view(['POST'])
@@ -84,8 +113,13 @@ def product_image(request):
     post = Product.objects.create(image=file)
     part = request.data['part']
 
-    new_title = TG.gen_title(file)
-    nobg_file = detect_bg(file)
+    # TODO : Reset after module is done
+    # new_title = TG.gen_title(file)
+    # nobg_file = detect_bg(file)
+
+    new_title = 'Fancy cloth for summer'
+    nobg_file = Image.open('/home/hsna/workspaces/try-on/try_on_image_dir/background_crop/product_4.jpg')
+
     nobg_post = ProductNB.objects.create(image=nobg_file, part=part, title=new_title)
 
     serializer_class = ProductNBSerializer(nobg_post)
@@ -93,6 +127,17 @@ def product_image(request):
 ## return HttpResponse with image? 아니면 자체적으로 다른 걸?
     return JsonResponse(serializer_class.data, safe=False)
 
+
+@swagger_auto_schema(
+    method='get',
+    operation_id="Detail Image View Post",
+    operation_description="Save Detail Images",
+    responses={
+        200: ProductNBSerializer,
+        404: "Not Found",
+    },
+    tags=['Detail']
+)
 
 # is this page necessary?
 @api_view(['GET'])
@@ -104,9 +149,20 @@ def detail_page(request):
     except Models.DoesNotExist:
         return HttpResponse(status=404)
 
-    serializer = ModelSerializer(post, many=True)
+    serializer = ProductNBSerializer(post)
     return JsonResponse(serializer.data, safe=False)
 
+
+@swagger_auto_schema(
+    method='post',
+    operation_id="Template Post",
+    operation_description="Create Templates",
+    responses={
+        200: TemplateSerializer,
+        404: "Not Found",
+    },
+    tags=['Template']
+)
 
 @api_view(['POST'])
 def create_template(request):
@@ -144,9 +200,22 @@ def create_template(request):
                                             zigzag=htmls[2]
                                             )
 
-    return JsonResponse(htmls)
+    serializer_class = TemplateSerializer(templates)
 
+    return JsonResponse(serializer_class.data, safe=False)
 
+@swagger_auto_schema(
+    method='get',
+    operation_id="Template Format Get",
+    operation_description="Provide Html Template format",
+    responses={
+        200: TemplateSerializer,
+        404: "Not Found",
+    },
+    tags=['Template']
+)
+
+# TODO : Is this function necessary?
 @api_view(['GET'])
 def layout_page(request):
     try:
@@ -156,11 +225,26 @@ def layout_page(request):
     except Models.DoesNotExist:
         return HttpResponse(status=404)
 
-    serializer = ModelSerializer(post)
+    serializer = TemplateSerializer(post)
     return JsonResponse(serializer.data, safe=False)
 
+@swagger_auto_schema(
+    method='post',
+    operation_id="Page Generation Post",
+    operation_description="Generate Product Page",
+    responses={
+        200: "Good",
+        404: "Not Found",
+    },
+    tags=['Register']
+)
 
 # TODO : 상품 가등록 page
 @api_view(['POST'])
 def register_page(request):
-    return
+    try:
+        id = request.data['id']
+        # post = Models.objects.filter(user_name=id)
+        return HttpResponse(status=200)
+    except Models.DoesNotExist:
+        return HttpResponse(status=404)

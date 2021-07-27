@@ -2,13 +2,11 @@ from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework import serializers
-from tryon.models import Model, Product, ProductNB, TemplatePage, TryOnImage
-
-from tutorial.quickstart.serializers import UserSerializer, GroupSerializer
+from tryon.models import Models, Product, ProductNB, TemplatePage, TryOnImage
 
 class ModelSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Model
+        model = Models
         fields = ('id', 'image')
 
 
