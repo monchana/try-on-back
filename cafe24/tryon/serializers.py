@@ -7,7 +7,7 @@ from tryon.models import Models, Product, ProductNB, TemplatePage, TryOnImage
 class ModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Models
-        fields = ('id', 'image')
+        fields = ('image',)
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -19,7 +19,7 @@ class ProductSerializer(serializers.ModelSerializer):
 class ProductNBSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductNB
-        fields = ('id', 'title', 'image')
+        fields = ('title', 'image')
 
 
 class TemplateSerializer(serializers.ModelSerializer):

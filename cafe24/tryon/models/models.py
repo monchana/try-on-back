@@ -2,7 +2,6 @@ from django.db import models
 
 
 class Models(models.Model):
-    id = models.IntegerField(primary_key=True, blank=False)
     image = models.ImageField(blank=False, upload_to='models')
 
     class Meta:
@@ -17,7 +16,6 @@ class Models(models.Model):
 
 
 class Product(models.Model):
-    id = models.IntegerField(primary_key=True, blank=False)
     image = models.ImageField(blank=False, upload_to='products')
     part = models.CharField(max_length=50)
 
@@ -26,7 +24,6 @@ class Product(models.Model):
 
 
 class ProductNB(models.Model):
-    id = models.IntegerField(primary_key=True, blank=False)
     image = models.ImageField(blank=False, upload_to='background_crop')
     title = models.CharField(max_length=200)
     part = models.CharField(max_length=50)
