@@ -66,6 +66,7 @@ MODELIMGDIR = '/home/hsna/workspaces/try-on/try_on_image_dir/models'
     method='post',
     operation_id="Model Image View Post",
     operation_description="Save Model Images",
+    request_body=ModelSerializer,
     responses={
         200: "Good",
         404: "Not Found",
@@ -75,6 +76,7 @@ MODELIMGDIR = '/home/hsna/workspaces/try-on/try_on_image_dir/models'
 
 # access model_images
 @api_view(['GET', 'POST'])
+@parser_classes((MultiPartParser, FileUploadParser))
 def model_image(request):
     # return model images
     if request.method == 'GET':
@@ -89,8 +91,9 @@ def model_image(request):
 
     # add model images
     elif request.method == 'POST':
-        file = request.data['file']
-        post = Models.objects.create(image=file)
+        serializer = ModelSerializer(data=request.data)
+        serializer.is_valid()
+        serializer.save()
         return HttpResponse(status=200)
 
 @swagger_auto_schema(
