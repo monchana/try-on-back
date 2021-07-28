@@ -126,7 +126,7 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MEDIA_URL = '/try-on-image-dir/'
+MEDIA_URL = 'try-on-image-dir/'
 
-TRYON_DIR = '/home/hsna/workspaces/try-on'
+TRYON_DIR = '/data'
 MEDIA_ROOT = os.path.join(TRYON_DIR, MEDIA_URL)
