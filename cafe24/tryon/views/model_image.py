@@ -1,13 +1,14 @@
 from tryon.models import Models, Product, ProductNB, TemplatePage, TryOnImage
 from django.http import HttpResponse, JsonResponse
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.parsers import MultiPartParser, FileUploadParser
+from rest_framework.decorators import api_view, parser_classes, permission_classes
 from tryon.serializers import ModelSerializer, ProductSerializer, ProductNBSerializer, TemplateSerializer, TryOnImageSerializer
 from drf_yasg.utils import swagger_auto_schema
 
 import urllib.request
 import os
 from os.path import join as pjoin
-from PIL import Image
+from django.core.files import File
 import ftplib
 
 # TODO : 해당 파트는 성찬이 형의 모듈화 기다리는 중
@@ -96,30 +97,30 @@ def model_image(request):
     method='post',
     operation_id="Product Image Post",
     operation_description="Save Product Images",
+    request_body=ProductSerializer,
     responses={
         200: ProductNBSerializer,
         404: "Not Found",
     },
     tags=['Product']
 )
-
-# id를 생성해 줘야 하나?
 @api_view(['POST'])
+@parser_classes((MultiPartParser, FileUploadParser))
 def product_image(request):
-    # return model images
-    # add model images
-    file = request.data['file']
-    post = Product.objects.create(image=file)
-    part = request.data['part']
+    serializer = ProductSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    data = serializer.validated_data
 
     # TODO : Reset after module is done
     # new_title = TG.gen_title(file)
     # nobg_file = detect_bg(file)
 
     new_title = 'Fancy cloth for summer'
-    nobg_file = Image.open('/home/hsna/workspaces/try-on/try_on_image_dir/background_crop/product_4.jpg')
-
-    nobg_post = ProductNB.objects.create(image=nobg_file, part=part, title=new_title)
+    nobg_file = File(open('/data/try-on-image-dir/background_crop/product_4.jpg', "rb"))
+    
+    nobg_post = ProductNB.objects.create(
+        image=nobg_file, part=data['part'], title=new_title)
 
     serializer_class = ProductNBSerializer(nobg_post)
 
