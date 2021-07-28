@@ -21,6 +21,10 @@ class ProductNBSerializer(serializers.ModelSerializer):
         model = ProductNB
         fields = ('id', 'title', 'image', 'part', 'product')
 
+class TemplatePostSerializer(serializers.Serializer):
+    model_ids = serializers.ListField(
+        child=serializers.IntegerField())
+    nobg_id = serializers.IntegerField()
 
 class TemplateSerializer(serializers.ModelSerializer):
     class Meta:

@@ -1,8 +1,9 @@
 from tryon.models import Models, Product, ProductNB, TemplatePage, TryOnImage
 from django.http import HttpResponse, JsonResponse
 from rest_framework.parsers import MultiPartParser, FileUploadParser
-from rest_framework.decorators import api_view, parser_classes, permission_classes
-from tryon.serializers import ModelSerializer, ProductSerializer, ProductNBSerializer, TemplateSerializer, TryOnImageSerializer
+from rest_framework.decorators import api_view, parser_classes
+from tryon.serializers import ModelSerializer, ProductSerializer, ProductNBSerializer, TemplateSerializer, TryOnImageSerializer, TemplatePostSerializer
+from tryon.views.file_maker import make_html
 from drf_yasg.utils import swagger_auto_schema
 
 import urllib.request
@@ -157,6 +158,7 @@ def detail_page(request):
     method='post',
     operation_id="Template Post",
     operation_description="Create Templates",
+    request_body=TemplatePostSerializer,
     responses={
         200: TemplateSerializer,
         404: "Not Found",
@@ -164,37 +166,37 @@ def detail_page(request):
     tags=['Template']
 )
 
+# Create Detail Page
 @api_view(['POST'])
 def create_template(request):
-    model_ids = request.data['model_ids']
-    nobg = request.data['nobg_id']
-
-    model_posts = Model.objects.filter(id=model_ids)
-    nobg_post = ProductNB.objects.get(id=nobg)
-
-    model_img_urls= model_posts.image.url
+    serializer = TemplatePostSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    d = serializer.data
+    model_posts = Models.objects.filter(id__in=d['model_ids'])
+    nobg_post = ProductNB.objects.get(id=d['nobg_id'])
+    model_img_urls= [p.image.url for p in model_posts]
     nobg_img_url = nobg_post.image.url
     part = nobg_post.part
     title = nobg_post.title
 
-    ftp = ftplib.FTP()
+    ftp= ftplib.FTP('tjagksro.cafe24.com','tjagksro','Fitzme123!@')
     ftp.retrlines('LIST')
 
     url_list = []
     for url in range(len(model_img_urls)):
-        new_id = f'{nobg}_{model_ids[url]}.jpg'
+        new_id = f"{d['nobg_id']}__{'_'.join(map(str, d['model_ids']))}.jpg"
 
-        result=TOG.get_tryon(nobg_img_url, model_img_urls[url], part=part)
-        img_result = TryOnImage.objects.create(image=result, title=title)
+        # result=TOG.get_tryon(nobg_img_url, model_img_urls[url], part=part)
+        # img_result = TryOnImage.objects.create(image=result, title=title)
         new_url = f'STOR/web/{new_id}'
         url_list.append(new_url)
 
-        ftp.storbinary(new_url, result)
+        # ftp.storbinary(new_url, result)
 
     ftp.quit()
 
     htmls = make_html(url_list)
-    templates = TemplatePage.objects.create(title=title, name=name, part=part,
+    templates = TemplatePage.objects.create(title=title, name='name', part=part,
                                             single_line=htmls[0],
                                             grid=htmls[1],
                                             zigzag=htmls[2]
