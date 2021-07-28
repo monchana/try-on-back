@@ -24,9 +24,9 @@ urlpatterns = [
     path('model/', model_image),
     path('product/', product_image),
 
-    path('detail/', detail_page),
+   #  path('detail/', detail_page),
     path('create_template/', create_template),
-    path('layout_page/', layout_page),
+   #  path('layout_page/', layout_page),
 
     path('register_page/', register_page),
 
