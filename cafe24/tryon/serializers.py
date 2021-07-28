@@ -19,7 +19,7 @@ class ProductSerializer(serializers.ModelSerializer):
 class ProductNBSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductNB
-        fields = ('title', 'image')
+        fields = ('title', 'image', 'part', 'product')
 
 
 class TemplateSerializer(serializers.ModelSerializer):

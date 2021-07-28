@@ -109,7 +109,7 @@ def model_image(request):
 def product_image(request):
     serializer = ProductSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
-    serializer.save()
+    product = serializer.save()
     data = serializer.validated_data
 
     # TODO : Reset after module is done
@@ -118,14 +118,11 @@ def product_image(request):
 
     new_title = 'Fancy cloth for summer'
     nobg_file = File(open('/data/try-on-image-dir/background_crop/product_4.jpg', "rb"))
-    
     nobg_post = ProductNB.objects.create(
-        image=nobg_file, part=data['part'], title=new_title)
+        image=nobg_file, part=data['part'], title=new_title, product=product)
+    serializer = ProductNBSerializer(nobg_post)
 
-    serializer_class = ProductNBSerializer(nobg_post)
-
-## return HttpResponse with image? 아니면 자체적으로 다른 걸?
-    return JsonResponse(serializer_class.data, safe=False)
+    return JsonResponse(serializer.data, safe=False)
 
 
 @swagger_auto_schema(
