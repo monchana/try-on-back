@@ -2,7 +2,7 @@ from tryon.models import Models, Product, ProductNB, TemplatePage, TryOnImage
 from django.http import HttpResponse, JsonResponse
 from rest_framework.parsers import MultiPartParser, FileUploadParser
 from rest_framework.decorators import api_view, parser_classes
-from tryon.serializers import ModelSerializer, ProductSerializer, ProductNBSerializer, TemplateSerializer, TryOnImageSerializer, TemplatePostSerializer
+from tryon.serializers import ModelSerializer, ProductSerializer, ProductNBSerializer, TemplateSerializer, TemplatePostSerializer, RegisterTemplateSerializer
 from tryon.views.file_maker import make_html
 from drf_yasg.utils import swagger_auto_schema
 
@@ -234,6 +234,7 @@ def layout_page(request):
     method='post',
     operation_id="Page Generation Post",
     operation_description="Generate Product Page",
+    request_body=RegisterTemplateSerializer,
     responses={
         200: "Good",
         404: "Not Found",
@@ -245,7 +246,8 @@ def layout_page(request):
 @api_view(['POST'])
 def register_page(request):
     try:
-        id = request.data['id']
+        serializer = RegisterTemplateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
         # post = Models.objects.filter(user_name=id)
         return HttpResponse(status=200)
     except Models.DoesNotExist:

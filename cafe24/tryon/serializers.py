@@ -37,6 +37,9 @@ class TryOnImageSerializer(serializers.ModelSerializer):
         model = TryOnImage
         fields = ('id', 'name', 'template', 'image', 'default')
 
+class RegisterTemplateSerializer(serializers.Serializer):
+    template_id = serializers.IntegerField()
+
 # class UserViewSet(viewsets.ModelViewSet):
 #     """
 #     API endpoint that allows users to be viewed or edited.
