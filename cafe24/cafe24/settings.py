@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-od&b%$+v&*8l+wnuyfa=((*bb9ngz$6paaf-u!s*w4e6fs47-y
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'cafe24.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': str(BASE_DIR / 'db.sqlite3'),
     }
 }
 
@@ -126,7 +126,7 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MEDIA_URL = '/try-on-image-dir/'
+MEDIA_URL = 'try-on-image-dir/'
 
-TRYON_DIR = '/home/hsna/workspaces/try-on'
+TRYON_DIR = '/data'
 MEDIA_ROOT = os.path.join(TRYON_DIR, MEDIA_URL)

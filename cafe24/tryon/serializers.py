@@ -7,31 +7,38 @@ from tryon.models import Models, Product, ProductNB, TemplatePage, TryOnImage
 class ModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Models
-        fields = ('id', 'image')
+        fields = ('id', 'image',)
 
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ('id', 'image')
+        fields = ('id', 'image', 'part')
 
 
 class ProductNBSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductNB
-        fields = ('id', 'title', 'image')
+        fields = ('id', 'title', 'image', 'part', 'product')
 
+class TemplatePostSerializer(serializers.Serializer):
+    model_ids = serializers.ListField(
+        child=serializers.IntegerField())
+    nobg_id = serializers.IntegerField()
 
 class TemplateSerializer(serializers.ModelSerializer):
     class Meta:
         model = TemplatePage
-        fields = ('name', 'title', 'part', 'single_line', 'grid', 'zigzag')
+        fields = ('id', 'name', 'title', 'part', 'single_line', 'grid', 'zigzag')
 
 
 class TryOnImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = TryOnImage
-        fields = ('name', 'template', 'image', 'default')
+        fields = ('id', 'name', 'template', 'image', 'default')
+
+class RegisterTemplateSerializer(serializers.Serializer):
+    template_id = serializers.IntegerField()
 
 # class UserViewSet(viewsets.ModelViewSet):
 #     """
