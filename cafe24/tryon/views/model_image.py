@@ -1,3 +1,4 @@
+import json
 from tryon.models import Models, Product, ProductNB, TemplatePage, TryOnImage
 from django.http import HttpResponse, JsonResponse
 from rest_framework.parsers import MultiPartParser, FileUploadParser
@@ -69,7 +70,7 @@ MODELIMGDIR = '/home/hsna/workspaces/try-on/try_on_image_dir/models'
     operation_description="Save Model Images",
     request_body=ModelSerializer,
     responses={
-        200: "Good",
+        200: ModelSerializer,
         404: "Not Found",
     },
     tags=['Model']
@@ -95,7 +96,7 @@ def model_image(request):
         serializer = ModelSerializer(data=request.data)
         serializer.is_valid()
         serializer.save()
-        return HttpResponse(status=200)
+        return HttpResponse(content=json.dumps(serializer.data), status=200)
 
 @swagger_auto_schema(
     method='post',
