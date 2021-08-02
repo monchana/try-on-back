@@ -65,7 +65,7 @@ MODELIMGDIR = '/home/hsna/workspaces/try-on/try_on_image_dir/models'
 @swagger_auto_schema(
     method='post',
     operation_id="Model Image View Post",
-    operation_description="Save Model Images",
+    operation_description="Step1. 모델 이미지 등록에 사용될 API",
     request_body=ModelSerializer,
     responses={
         200: ModelSerializer,
@@ -99,7 +99,7 @@ def model_image(request):
 @swagger_auto_schema(
     method='post',
     operation_id="Product Image Post",
-    operation_description="Save Product Images",
+    operation_description="Step2. 상품 이미지 업로드에 사용될 API",
     request_body=ProductSerializer,
     responses={
         200: ProductNBSerializer,
@@ -157,7 +157,7 @@ def detail_page(request):
 @swagger_auto_schema(
     method='post',
     operation_id="Template Post",
-    operation_description="Create Templates",
+    operation_description="Step3. 상세 페이지 생성에서 사용되는 API",
     request_body=TemplatePostSerializer,
     responses={
         200: TemplateSerializer,
@@ -233,7 +233,7 @@ def layout_page(request):
 @swagger_auto_schema(
     method='post',
     operation_id="Page Generation Post",
-    operation_description="Generate Product Page",
+    operation_description="Step4. 레이아웃 선택 / 상품등록 페이지에서 가등록에 사용될 API",
     request_body=RegisterTemplateSerializer,
     responses={
         200: "Good",
