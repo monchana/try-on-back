@@ -1,5 +1,5 @@
 import json
-from tryon.models import Models, Product, ProductNB, TemplatePage, TryOnImage
+from tryon.models import Models, ProductNB, TemplatePage
 from django.http import HttpResponse, JsonResponse
 from rest_framework.parsers import MultiPartParser, FileUploadParser
 from rest_framework.decorators import api_view, parser_classes
@@ -7,9 +7,7 @@ from tryon.serializers import ModelSerializer, ProductSerializer, ProductNBSeria
 from tryon.views.file_maker import make_html
 from drf_yasg.utils import swagger_auto_schema
 
-import urllib.request
-import os
-from os.path import join as pjoin
+from django.conf import settings
 from django.core.files import File
 import ftplib
 
@@ -126,8 +124,9 @@ def product_image(request):
     nobg_post = ProductNB.objects.create(
         image=nobg_file, part=data['part'], title=new_title, product=product)
     serializer = ProductNBSerializer(nobg_post)
-
-    return JsonResponse(serializer.data, safe=False)
+    data = serializer.data
+    data['image'] = data['image'].replace(settings.MEDIA_ROOT, '/')
+    return JsonResponse(data, safe=False)
 
 
 @swagger_auto_schema(
