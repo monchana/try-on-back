@@ -39,6 +39,8 @@ class TryOnImageSerializer(serializers.ModelSerializer):
 
 class RegisterTemplateSerializer(serializers.Serializer):
     template_id = serializers.IntegerField()
+    layout = serializers.CharField()
+    title = serializers.CharField()
 
 # class UserViewSet(viewsets.ModelViewSet):
 #     """
