@@ -1,7 +1,7 @@
-import os
 from os.path import join as pjoin
+from random import choice
+import os
 import ftplib
-import cv2
 
 '''
     images refer to list of names of images
@@ -9,8 +9,9 @@ import cv2
 def send_image_ftp(images, shop_url, nickname, pwd):
     ftp = ftplib.FTP()
     ftp.retrlines('LIST')
+    file_path = '/data/try-on-image-dir/products/'
     for image in images:
-        file = cv2.imread(image)
+        file = open(pjoin(file_path, choice(os.listdir(file_path))), "rb")
         ftp.storbinary(f'STOR/web/{image}', file)
 
     ftp.quit()

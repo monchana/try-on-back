@@ -1,4 +1,7 @@
 import json
+import os
+from os.path import join as pjoin
+from random import choice
 from tryon.models import Models, ProductNB, TemplatePage
 from django.http import HttpResponse, JsonResponse
 from rest_framework.parsers import MultiPartParser, FileUploadParser
@@ -120,7 +123,8 @@ def product_image(request):
     # nobg_file = detect_bg(file)
 
     new_title = 'Fancy cloth for summer'
-    nobg_file = File(open('/data/try-on-image-dir/background_crop/product_4.jpg', "rb"))
+    file_path = '/data/try-on-image-dir/products/'
+    nobg_file = File(open(pjoin(file_path, choice(os.listdir(file_path))), "rb"))
     nobg_post = ProductNB.objects.create(
         image=nobg_file, part=data['part'], title=new_title, product=product)
     serializer = ProductNBSerializer(nobg_post)
