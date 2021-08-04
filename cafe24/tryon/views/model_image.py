@@ -177,25 +177,25 @@ def create_template(request):
     model_posts = Models.objects.filter(id__in=d['model_ids'])
     nobg_post = ProductNB.objects.get(id=d['nobg_id'])
     model_img_urls= [p.image.url for p in model_posts]
-    nobg_img_url = nobg_post.image.url
+    # nobg_img_url = nobg_post.image.url
     part = nobg_post.part
     title = nobg_post.title
 
-    ftp= ftplib.FTP('tjagksro.cafe24.com','tjagksro','Fitzme123!@')
-    ftp.retrlines('LIST')
+    # ftp= ftplib.FTP('tjagksro.cafe24.com','tjagksro','Fitzme123!@')
+    # ftp.retrlines('LIST')
 
     url_list = []
-    for url in range(len(model_img_urls)):
-        new_id = f"{d['nobg_id']}__{'_'.join(map(str, d['model_ids']))}.jpg"
+    # for url in range(len(model_img_urls)):
+    #     new_id = f"{d['nobg_id']}__{'_'.join(map(str, d['model_ids']))}.jpg"
 
         # result=TOG.get_tryon(nobg_img_url, model_img_urls[url], part=part)
         # img_result = TryOnImage.objects.create(image=result, title=title)
-        new_url = f'STOR/web/{new_id}'
-        url_list.append(new_url)
+        # new_url = f'STOR/web/{new_id}'
+        # url_list.append(new_url)
 
         # ftp.storbinary(new_url, result)
 
-    ftp.quit()
+    # ftp.quit()
 
     htmls = make_html(url_list)
     templates = TemplatePage.objects.create(title=title, name='name', part=part,
