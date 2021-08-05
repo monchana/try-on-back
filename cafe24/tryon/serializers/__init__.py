@@ -1,4 +1,4 @@
 from .model import *
-from .page import *
 from .product import *
+from .result import *
 from .template import *

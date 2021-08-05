@@ -1,0 +1,36 @@
+
+from django.http import JsonResponse
+from django.conf import settings
+from rest_framework.parsers import MultiPartParser, FileUploadParser
+from rest_framework.decorators import api_view, parser_classes
+from drf_yasg.utils import swagger_auto_schema
+
+from tryon.serializers import ProductNBSerializer, ProductSerializer
+from tryon.models import ProductNB
+
+
+@swagger_auto_schema(
+    method='post',
+    operation_id="Product Image Post",
+    operation_description="Step2. 상품 이미지 업로드에 사용될 API",
+    request_body=ProductSerializer,
+    responses={
+        200: ProductNBSerializer,
+        404: "Not Found",
+    },
+    tags=['Product']
+)
+@api_view(['POST'])
+@parser_classes((MultiPartParser, FileUploadParser))
+def product_image(request):
+    serializer = ProductSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    product = serializer.save()
+    data = serializer.validated_data
+    new_title = 'Fancy cloth for summer'
+    nobg_post = ProductNB.objects.create(
+        image=data['image'], part=data['part'], title=new_title, product=product)
+    serializer = ProductNBSerializer(nobg_post)
+    data = serializer.data
+    data['image'] = data['image'].replace(settings.MEDIA_ROOT, '/')
+    return JsonResponse(data, safe=False)

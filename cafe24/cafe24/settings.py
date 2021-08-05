@@ -53,7 +53,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# CORS 관련 추가 
+# CORS 관련 추가
 # CORS_ORIGIN_WHITELIST = ['https://try-on.netlify.app']
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = False

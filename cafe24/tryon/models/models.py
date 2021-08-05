@@ -5,7 +5,7 @@ class Models(models.Model):
     image = models.ImageField(blank=False, upload_to='models')
 
     class Meta:
-        ordering= ['id']
+        ordering = ['id']
         verbose_name = 'Image_models'
 
     def __int__(self):
@@ -32,7 +32,7 @@ class ProductNB(models.Model):
     def __int__(self):
         return self.id
 
-# 어차피 3개면 그냥 format 3개 return하게 할까?
+
 class TemplatePage(models.Model):
     name = models.CharField(max_length=255)
     title = models.CharField(max_length=200)
