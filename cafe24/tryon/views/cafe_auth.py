@@ -1,15 +1,17 @@
 import base64
-from django.http import response
+from rest_framework.response import Response
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 import requests
 from typing import List, Final
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from rest_framework.decorators import api_view
 
 from tryon.exceptions.cafe import CafeTokenNotExistInCache
 
 
-class Token(dataclass):
+@dataclass
+class Token:
     access_token: str
     expires_at: str  # 2 Hour
     refresh_token: str
@@ -35,14 +37,14 @@ def get_encoded_auth() -> str:
 
 
 DEVELOPER_CLIENT_ID: Final[str] = 'f31zyAgabCWXPLDAqtLYdD'
-DEVELOPER_CLIENT_SECRET: Final[str] = '29eBoMseokKvOAlh1jWqQM'
+DEVELOPER_CLIENT_SECRET: Final[str] = 'e3F4G6bgACTXhbovBCCMnE'
 CACHE_EXPIRE_TIME: Final[int] = round(60 * 60 * 1.5)
 API_URL = 'https://{shop_id}.cafe24api.com'
 TOKEN_URL = "{api_url}/api/v2/oauth/token"
 TOKEN_HEADER = {
     'Authorization': get_encoded_auth(),
     'Content-Type': 'application/x-www-form-urlencoded',
-},
+}
 
 
 @api_view(['POST'])
@@ -58,9 +60,19 @@ def refresh_token(request):
     )
     cafe = Token(**resp.json())
     resp.raise_for_status()
-    return response(data=cafe._asdict(), status=status.HTTP_200_OK)
+    return Response(data=cafe._asdict(), status=status.HTTP_200_OK)
 
 
+@swagger_auto_schema(
+    method='post',
+    operation_id="Set Token From Cafe",
+    operation_description="카페24 Authenticate for Token",
+    responses={
+        200: 'Good',
+        404: "Not Found",
+    },
+    tags=['Token']
+)
 @api_view(['POST'])
 def set_token_from_cafe(request):
     resp = requests.post(
@@ -71,5 +83,7 @@ def set_token_from_cafe(request):
             'redirect_uri': 'https://try-on.netlify.app'
         }, headers=TOKEN_HEADER
     )
-    resp.raise_for_status()
-    return Token(**resp.json())
+
+    if resp.status_code != 200:
+        return Response(data=resp.json())
+    return Response(data=asdict(Token(**resp.json())), status=status.HTTP_200_OK)
