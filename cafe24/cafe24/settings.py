@@ -138,3 +138,7 @@ MEDIA_URL = 'try-on-image-dir/'
 
 TRYON_DIR = '~/data'
 MEDIA_ROOT = os.path.join(TRYON_DIR, MEDIA_URL)
+
+REST_FRAMEWORK = {
+    'EXCEPTION_HANDLER': 'tryon.exceptions.custom_exception_handler'
+}

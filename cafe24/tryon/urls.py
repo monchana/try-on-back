@@ -21,14 +21,14 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
-    path('model/', model_image),
-    path('product/', product_image),
+    path('model/', model_image),  # step1
+    path('product/', product_image),  # step2
+    path('create_template/', create_template),  # step3
+    path('register_page/', register_page),  # step4
 
-    #  path('detail/', detail_page),
-    path('create_template/', create_template),
-    #  path('layout_page/', layout_page),
+    # Auth
+    path('set_token_from_cafe/', set_token_from_cafe),  # step4
 
-    path('register_page/', register_page),
 
     # API Document
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='swagger'),
