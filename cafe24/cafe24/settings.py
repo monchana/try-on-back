@@ -136,7 +136,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = 'try-on-image-dir/'
 
-TRYON_DIR = '~/data'
+TRYON_DIR = os.path.expanduser('~/data')
 MEDIA_ROOT = os.path.join(TRYON_DIR, MEDIA_URL)
 
 REST_FRAMEWORK = {

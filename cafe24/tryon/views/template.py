@@ -14,7 +14,7 @@ from tryon.models import Models, ProductNB
 def send_image_ftp(images, shop_url, nickname, pwd):
     ftp = ftplib.FTP()
     ftp.retrlines('LIST')
-    file_path = '~/data/try-on-image-dir/products/'
+    file_path = os.path.expanduser('~/data/try-on-image-dir/products/')
     for image in images:
         file = open(pjoin(file_path, choice(os.listdir(file_path))), "rb")
         ftp.storbinary(f'STOR/web/{image}', file)
