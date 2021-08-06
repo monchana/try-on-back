@@ -8,7 +8,7 @@ from rest_framework.decorators import api_view
 from drf_yasg.utils import swagger_auto_schema
 
 from tryon.serializers import TemplatePostSerializer, TemplateSerializer
-from tryon.models import Models, ProductNB
+from tryon.models import Models, ProductNB, TemplatePage
 
 
 def send_image_ftp(images, shop_url, nickname, pwd):
