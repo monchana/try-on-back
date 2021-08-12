@@ -12,9 +12,17 @@ from tryon.models import Models, ProductNB, TemplatePage
 
 
 def send_image_ftp(images, shop_url, nickname, pwd):
-    ftp = ftplib.FTP()
+    ftp = ftplib.FTP('tjagksro.cafe24.com', 'tjagksro', 'Fitzme123!@')
     ftp.retrlines('LIST')
     file_path = os.path.expanduser('~/data/try-on-image-dir/products/')
+    # for url in range(len(model_img_urls)):
+    #     new_id = f"{d['nobg_id']}__{'_'.join(map(str, d['model_ids']))}.jpg"
+
+    # result=TOG.get_tryon(nobg_img_url, model_img_urls[url], part=part)
+    # img_result = TryOnImage.objects.create(image=result, title=title)
+    # new_url = f'STOR/web/{new_id}'
+    # url_list.append(new_url)
+
     for image in images:
         file = open(pjoin(file_path, choice(os.listdir(file_path))), "rb")
         ftp.storbinary(f'STOR/web/{image}', file)
@@ -52,23 +60,7 @@ def create_template(request):
     # nobg_img_url = nobg_post.image.url
     part = nobg_post.part
     title = nobg_post.title
-
-    # ftp= ftplib.FTP('tjagksro.cafe24.com','tjagksro','Fitzme123!@')
-    # ftp.retrlines('LIST')
-
     url_list = []
-    # for url in range(len(model_img_urls)):
-    #     new_id = f"{d['nobg_id']}__{'_'.join(map(str, d['model_ids']))}.jpg"
-
-    # result=TOG.get_tryon(nobg_img_url, model_img_urls[url], part=part)
-    # img_result = TryOnImage.objects.create(image=result, title=title)
-    # new_url = f'STOR/web/{new_id}'
-    # url_list.append(new_url)
-
-    # ftp.storbinary(new_url, result)
-
-    # ftp.quit()
-
     htmls = make_html(url_list)
     templates = TemplatePage.objects.create(title=title, name='name', part=part,
                                             single_line=htmls[0],
