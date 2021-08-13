@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 import requests
-from typing import List, Final
+from typing import List
 from dataclasses import asdict, dataclass
 from rest_framework.decorators import api_view
 
@@ -36,9 +36,9 @@ def get_encoded_auth() -> str:
     return "Basic " + encode_str(f"{DEVELOPER_CLIENT_ID}:{DEVELOPER_CLIENT_SECRET}")
 
 
-DEVELOPER_CLIENT_ID: Final[str] = 'f31zyAgabCWXPLDAqtLYdD'
-DEVELOPER_CLIENT_SECRET: Final[str] = 'e3F4G6bgACTXhbovBCCMnE'
-CACHE_EXPIRE_TIME: Final[int] = round(60 * 60 * 1.5)
+DEVELOPER_CLIENT_ID = 'f31zyAgabCWXPLDAqtLYdD'
+DEVELOPER_CLIENT_SECRET = 'e3F4G6bgACTXhbovBCCMnE'
+CACHE_EXPIRE_TIME = round(60 * 60 * 1.5)
 API_URL = 'https://{shop_id}.cafe24api.com'
 TOKEN_URL = "{api_url}/api/v2/oauth/token"
 TOKEN_HEADER = {
