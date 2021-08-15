@@ -27,7 +27,9 @@ urlpatterns = [
     path('register_page/', register_page),  # step4
 
     # Auth
-    path('set_token_from_cafe/', set_token_from_cafe),  # step4
+    path('set_token/', set_token),
+    path('refresh_token/', refresh_token),
+
 
 
     # API Document

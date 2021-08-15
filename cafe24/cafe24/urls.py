@@ -22,7 +22,7 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', RedirectView.as_view(url='/main/', permanent=True)),
+    path('', RedirectView.as_view(url='/try-on/swagger', permanent=True)),
     path('try-on/', include('tryon.urls')),
 ]
 

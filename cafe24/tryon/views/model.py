@@ -43,6 +43,6 @@ def model_image(request):
 
     elif request.method == 'POST':
         serializer = ModelSerializer(data=request.data)
-        serializer.is_valid()
+        serializer.is_valid(raise_exception=True)
         serializer.save()
         return HttpResponse(content=json.dumps(serializer.data), status=200)
