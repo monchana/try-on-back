@@ -39,7 +39,7 @@ class GenderModel(models.Model):
         ('F', 'Female'),
     )
     gender = models.CharField(
-        max_length=1, choices=GENDER_CHOICES, default="M")
+        max_length=1, choices=GENDER_CHOICES, default="F")
 
     class Meta:
         abstract = True
