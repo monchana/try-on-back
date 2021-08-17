@@ -1,5 +1,7 @@
 import json
 from django.http import HttpResponse, JsonResponse
+from django.utils.decorators import method_decorator
+from rest_framework import status, viewsets
 from rest_framework.parsers import MultiPartParser, FileUploadParser
 from rest_framework.decorators import api_view, parser_classes
 from drf_yasg.utils import swagger_auto_schema
@@ -8,41 +10,37 @@ from tryon.serializers import ModelSerializer
 from tryon.models import Models
 
 
-@swagger_auto_schema(
-    method='get',
-    operation_id="Model Image View Get",
-    operation_description="Provide Model Images",
-    responses={
-        200: ModelSerializer,
-        404: "Not Found",
-    },
-    tags=['Model']
-)
-@swagger_auto_schema(
-    method='post',
-    operation_id="Model Image View Post",
-    operation_description="Step1. 모델 이미지 등록에 사용될 API",
-    request_body=ModelSerializer,
-    responses={
-        200: ModelSerializer,
-        404: "Not Found",
-    },
-    tags=['Model']
-)
-@api_view(['GET', 'POST'])
-@parser_classes((MultiPartParser, FileUploadParser))
-def model_image(request):
-    if request.method == 'GET':
-        try:
-            post = Models.objects.all()
-        except Models.DoesNotExist:
-            return HttpResponse(status=404)
-
-        serializer = ModelSerializer(post, many=True)
-        return JsonResponse(serializer.data, safe=False)
-
-    elif request.method == 'POST':
-        serializer = ModelSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return HttpResponse(content=json.dumps(serializer.data), status=200)
+@method_decorator(name='create', decorator=swagger_auto_schema(
+    operation_id="모델 생성",
+    operation_description="모델을 생성합니다.",
+    tags=['Model'],
+))
+@method_decorator(name='retrieve', decorator=swagger_auto_schema(
+    operation_id="단일 모델 얻어오기",
+    operation_description="단일 모델 정보를 제공합니다",
+    tags=['Model'],
+))
+@method_decorator(name='list', decorator=swagger_auto_schema(
+    operation_id="모델 정보 리스트",
+    operation_description="모델 목록을 받아옵니다",
+    tags=['Model'],
+))
+@method_decorator(name='partial_update', decorator=swagger_auto_schema(
+    operation_id="모델 정보 부분 변경",
+    operation_description="모델 정보 부분변경 기능을 제공 합니다.",
+    tags=['Model'],
+))
+@method_decorator(name='update', decorator=swagger_auto_schema(
+    operation_id="모델 정보 변경",
+    operation_description="모델 정보를 변경 기능을 제공 합니다.",
+    tags=['Model'],
+))
+@method_decorator(name='destroy', decorator=swagger_auto_schema(
+    operation_id="모델 삭제",
+    operation_description=" 특정 ID의 모델를 삭제 기능을 제공합니다.",
+    tags=['Model'],
+))
+class TryModelViewSet(viewsets.ModelViewSet):
+    queryset = Models.objects.all()
+    parser_classes = (MultiPartParser, FileUploadParser)
+    serializer_class = ModelSerializer

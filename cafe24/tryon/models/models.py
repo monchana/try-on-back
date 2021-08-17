@@ -1,7 +1,9 @@
 from django.db import models
 
+from tryon.models.common import GenderModel
 
-class Models(models.Model):
+
+class Models(GenderModel):
     image = models.ImageField(blank=False, upload_to='models')
 
     class Meta:

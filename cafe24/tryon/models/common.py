@@ -31,3 +31,15 @@ class BaseActiveModel(models.Model):
 
     class Meta:
         abstract = True
+
+
+class GenderModel(models.Model):
+    GENDER_CHOICES = (
+        ('M', 'Male'),
+        ('F', 'Female'),
+    )
+    gender = models.CharField(
+        max_length=1, choices=GENDER_CHOICES, default="M")
+
+    class Meta:
+        abstract = True

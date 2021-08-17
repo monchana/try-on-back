@@ -1,6 +1,7 @@
 from django.urls import path, re_path
 from django.conf.urls.static import static
 from django.conf import settings
+from rest_framework.routers import DefaultRouter
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
@@ -19,9 +20,9 @@ schema_view = get_schema_view(
     public=True,
     permission_classes=(permissions.AllowAny,),
 )
-
+router = DefaultRouter()
+router.register(r'model', TryModelViewSet, basename='models')
 urlpatterns = [
-    path('model/', model_image),  # step1
     path('product/', product_image),  # step2
     path('create_template/', create_template),  # step3
     path('register_page/', register_page),  # step4
@@ -40,5 +41,5 @@ urlpatterns = [
 
     # path('category/<int:numbering>/', views.post_list),
     # path('confirmed/directory/<str:filename>/<str:new_category>/', views.confirm_directory),
-]
+] + router.urls
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
