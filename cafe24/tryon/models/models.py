@@ -17,7 +17,7 @@ class Models(GenderModel):
         return self.id
 
 
-class Product(models.Model):
+class Product(GenderModel):
     image = models.ImageField(blank=False, upload_to='products')
     part = models.CharField(max_length=50)
 

@@ -7,10 +7,10 @@ from tryon.models import Product, ProductNB
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ('id', 'image', 'part')
+        fields = '__all__'
 
 
 class ProductNBSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductNB
-        fields = ('id', 'title', 'image', 'part', 'product')
+        fields = '__all__'
