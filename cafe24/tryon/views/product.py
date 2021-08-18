@@ -1,4 +1,3 @@
-
 from django.http import JsonResponse
 from django.conf import settings
 from rest_framework.parsers import MultiPartParser, FileUploadParser
@@ -28,9 +27,15 @@ def product_image(request):
     product = serializer.save()
     data = serializer.validated_data
     new_title = 'Fancy cloth for summer'
+    nb_img = get_no_back_img(data['image'])
     nobg_post = ProductNB.objects.create(
-        image=data['image'], part=data['part'], title=new_title, product=product)
+        image=nb_img, part=data['part'], title=new_title, product=product)
     serializer = ProductNBSerializer(nobg_post)
     data = serializer.data
     data['image'] = data['image'].replace(settings.MEDIA_ROOT, '/')
     return JsonResponse(data, safe=False)
+
+
+# Temp
+def get_no_back_img(img):
+    return img

@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.decorators import api_view
-from tryon.services.cafe import Cafe
+from tryon.services.cafe.cafe import Cafe
 from tryon.serializers.cafe_auth import ShopIdSerializer, CodeSerializer
 
 

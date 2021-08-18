@@ -1,41 +1,13 @@
-
-from os.path import join as pjoin
-from random import choice
-import os
-import ftplib
+from tryon.models.models import TryOnImage
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from drf_yasg.utils import swagger_auto_schema
+from django.core.files import File
+from urllib import request as req
 
-from tryon.serializers import TemplatePostSerializer, TemplateSerializer
+from tryon.serializers import TemplatePostSerializer, CreateTemplateSerializer
 from tryon.models import Models, ProductNB, TemplatePage
-
-
-def send_image_ftp(images, shop_url, nickname, pwd):
-    ftp = ftplib.FTP('tjagksro.cafe24.com', 'tjagksro', 'Fitzme123!@')
-    ftp.retrlines('LIST')
-    file_path = os.path.expanduser('~/data/try-on-image-dir/products/')
-    # for url in range(len(model_img_urls)):
-    #     new_id = f"{d['nobg_id']}__{'_'.join(map(str, d['model_ids']))}.jpg"
-
-    # result=TOG.get_tryon(nobg_img_url, model_img_urls[url], part=part)
-    # img_result = TryOnImage.objects.create(image=result, title=title)
-    # new_url = f'STOR/web/{new_id}'
-    # url_list.append(new_url)
-
-    for image in images:
-        file = open(pjoin(file_path, choice(os.listdir(file_path))), "rb")
-        ftp.storbinary(f'STOR/web/{image}', file)
-
-    ftp.quit()
-
-
-def make_html(images):
-    return (
-        "<h1> Single line </ h1>",
-        "<h2> Grid </ h2>",
-        "<h3> ZigZag </ h3>",
-    )
+from tryon.services.cafe.tryon_ftp import send_image_ftp, get_user_info
 
 
 @swagger_auto_schema(
@@ -44,7 +16,7 @@ def make_html(images):
     operation_description="Step3. 상세 페이지 생성에서 사용되는 API",
     request_body=TemplatePostSerializer,
     responses={
-        200: TemplateSerializer,
+        200: CreateTemplateSerializer,
         404: "Not Found",
     },
     tags=['Template']
@@ -53,21 +25,46 @@ def make_html(images):
 def create_template(request):
     serializer = TemplatePostSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
-    d = serializer.data
-    model_posts = Models.objects.filter(id__in=d['model_ids'])
+    d = serializer.validated_data
+
     nobg_post = ProductNB.objects.get(id=d['nobg_id'])
-    model_img_urls = [p.image.url for p in model_posts]
-    # nobg_img_url = nobg_post.image.url
-    part = nobg_post.part
-    title = nobg_post.title
-    url_list = []
-    htmls = make_html(url_list)
-    templates = TemplatePage.objects.create(title=title, name='name', part=part,
-                                            single_line=htmls[0],
-                                            grid=htmls[1],
-                                            zigzag=htmls[2]
-                                            )
+    model_imgs_path = [
+        p.image.path for p in Models.objects.filter(id__in=d['model_ids'])]
+    nobg_img_path = nobg_post.image.path
 
-    serializer_class = TemplateSerializer(templates)
+    imgdict_list = generate_tryon(
+        prodnb_img_path=nobg_img_path, model_imgs_path=model_imgs_path)
+    htmls = make_html('')
+    tryons = []
+    for d in imgdict_list:
+        if 'model' in d['src']:
+            tryons.append(TryOnImage(name="", image=File(
+                open(d['src'], 'rb')), default=False))
+    tryon_imgs = TryOnImage.objects.bulk_create(tryons)
+    template = TemplatePage.objects.create(
+        title=nobg_post.title, name='name', part=nobg_post.part, **htmls)
+    serializer = CreateTemplateSerializer(
+        {"template": template, "tryon_imgs": tryon_imgs})
+    return JsonResponse(serializer.data, safe=False)
 
-    return JsonResponse(serializer_class.data, safe=False)
+# Temp =====
+
+
+def make_html(images):
+    return {
+        "single_line": "<h1> Single line </ h1>",
+        "grid": "<h2> Grid </ h2>",
+        "zigzag": "<h3> ZigZag </ h3>",
+    }
+
+
+def generate_tryon(prodnb_img_path, model_imgs_path):
+    imgdict_list = []
+    for i in model_imgs_path:
+        imgdict_list.append({"src": i, "dest": f'models/{i.split("/")[-1]}'})
+    imgdict_list.append(
+        {"src": prodnb_img_path, "dest": f'products/{prodnb_img_path.split("/")[-1]}'})
+    send_image_ftp(imgdict_list, **get_user_info())
+    return imgdict_list
+
+# ===== Temp

@@ -4,6 +4,7 @@ from django.http import Http404
 from django.core.exceptions import PermissionDenied
 
 from .cafe import *
+from .service import *
 
 
 def custom_exception_handler(exc, context):

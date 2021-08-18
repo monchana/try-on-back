@@ -1,3 +1,4 @@
+from tryon.serializers.tryon import TryOnImageModelSerializer
 from rest_framework import serializers
 from tryon.models import TemplatePage
 
@@ -8,8 +9,12 @@ class TemplatePostSerializer(serializers.Serializer):
     nobg_id = serializers.IntegerField()
 
 
-class TemplateSerializer(serializers.ModelSerializer):
+class TemplateModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = TemplatePage
-        fields = ('id', 'name', 'title', 'part',
-                  'single_line', 'grid', 'zigzag')
+        fields = '__all__'
+
+
+class CreateTemplateSerializer(serializers.Serializer):
+    template = TemplateModelSerializer
+    tryon_imgs = TryOnImageModelSerializer(many=True)

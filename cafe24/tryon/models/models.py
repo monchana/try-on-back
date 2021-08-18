@@ -46,6 +46,5 @@ class TemplatePage(models.Model):
 
 class TryOnImage(models.Model):
     name = models.CharField(max_length=255)
-    template = models.ForeignKey(TemplatePage, on_delete=models.CASCADE)
     image = models.ImageField(blank=False, upload_to='adjusted')
     default = models.BooleanField(default=False)
