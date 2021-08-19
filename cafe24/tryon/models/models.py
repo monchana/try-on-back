@@ -1,6 +1,6 @@
 from django.db import models
 
-from tryon.models.common import GenderModel
+from tryon.models.common import GenderModel, PartModel
 
 
 class Models(GenderModel):
@@ -17,29 +17,26 @@ class Models(GenderModel):
         return self.id
 
 
-class Product(GenderModel):
+class Product(GenderModel, PartModel):
     image = models.ImageField(blank=False, upload_to='products')
-    part = models.CharField(max_length=50)
 
     def __int__(self):
         return self.id
 
 
-class ProductNB(models.Model):
+class ProductNB(PartModel):
     url = models.CharField(max_length=500, help_text="CDN IMG", blank=True)
     image = models.ImageField(blank=False, upload_to='background_crop')
     title = models.CharField(max_length=200)
-    part = models.CharField(max_length=50)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
 
     def __int__(self):
         return self.id
 
 
-class TemplatePage(models.Model):
+class TemplatePage(PartModel):
     name = models.CharField(max_length=255)
     title = models.CharField(max_length=200)
-    part = models.CharField(max_length=50)
     single_line = models.TextField()
     grid = models.TextField()
     zigzag = models.TextField()

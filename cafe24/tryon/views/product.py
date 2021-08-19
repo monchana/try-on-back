@@ -11,7 +11,7 @@ from tryon.utils.path import get_static_img_path
 @swagger_auto_schema(
     method='post',
     operation_id="Product Image Post",
-    operation_description="Step2. 상품 이미지 업로드에 사용될 API",
+    operation_description="Step2. 상품 이미지 업로드에 사용될 API, no background image가 반환됩니다.",
     request_body=ProductSerializer,
     responses={
         200: ProductNBSerializer,

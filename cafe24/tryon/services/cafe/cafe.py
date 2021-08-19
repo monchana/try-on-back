@@ -49,9 +49,13 @@ class Cafe(SingletonInstance):
         token = self.tokens.get(shop_id)
         if token is None:
             raise CafeTokenNotExistInCache()
+        # import pdb
+        # pdb.set_trace()
         res = requests.post(url=API_URL.format(
             shop_id=shop_id) + "admin/products", json=json, headers=self.get_api_header(token))
-        return status.is_success(res.status_code)
+        if status.is_success(res.status_code):
+            return res.status_code, "성공적으로 상품이 등록 되었습니다."
+        return res.status_code, res.json()['error']['message']
 
     @staticmethod
     def get_api_header(token: Token):

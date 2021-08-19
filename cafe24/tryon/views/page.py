@@ -1,8 +1,8 @@
-from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from drf_yasg.utils import swagger_auto_schema
 from tryon.services.cafe.cafe import Cafe
+from django.conf import settings
 
 from tryon.models.models import ProductNB, TemplatePage
 from tryon.serializers import RegisterTemplateSerializer
@@ -30,15 +30,16 @@ def register_page(request):
     prod = ProductNB.objects.get(pk=data['productnb_id'])
     pub_title = data['title']
     cafe = Cafe()
-    result = cafe.register_prod(
+    code, msg = cafe.register_prod(
         shop_id=data["user_id"],
         json={
             "shop_no": 1,
             "request": {
                 "display": "T",
                 "selling": "T",
-                "description": "<h1> Test </h1> <img src='https://cdn.pixabay.com/photo/2018/05/17/06/22/dog-3407906_960_720.jpg' />",
-                "detail_image": "/web/product/medium/202108/22585dfd9401361d03d7449ec1056f36.png",
+                # "description": "<h1> Test </h1> <img src='https://cdn.pixabay.com/photo/2018/05/17/06/22/dog-3407906_960_720.jpg' />",
+                "description": html,
+                "detail_image": prod.url[prod.url.rfind(settings.BASE_FTP_DIR):],
                 "add_category_no": [
                     {
                         "category_no": 43,
@@ -46,12 +47,10 @@ def register_page(request):
                         "new": "T"
                     }
                 ],
-                "product_name": "asd",
+                "product_name": pub_title,
                 "supply_price": 4000,
                 "price": 12300
             }
         }
     )
-    if result is True:
-        return Response(status=status.HTTP_201_CREATED)
-    return Response(status=status.HTTP_400_BAD_REQUEST)
+    return Response(status=code, data={"message": msg})

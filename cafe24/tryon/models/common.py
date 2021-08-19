@@ -43,3 +43,17 @@ class GenderModel(models.Model):
 
     class Meta:
         abstract = True
+
+
+class PartModel(models.Model):
+    PART_CHOICES = (
+        ('상의', 'Top'),
+        ('하의', 'Bottom'),
+        ('아우터', 'Outer'),
+        ('원피스', 'Dress'),
+    )
+    part = models.CharField(
+        max_length=3, choices=PART_CHOICES, default="하의")
+
+    class Meta:
+        abstract = True

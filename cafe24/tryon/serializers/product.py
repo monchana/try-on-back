@@ -11,6 +11,11 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class ProductNBSerializer(serializers.ModelSerializer):
+    gender = serializers.SerializerMethodField()
+
+    def get_gender(self, obj):
+        return obj.product.gender
+
     class Meta:
         model = ProductNB
         fields = '__all__'
