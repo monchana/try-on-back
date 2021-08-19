@@ -46,5 +46,6 @@ class TemplatePage(models.Model):
 
 class TryOnImage(models.Model):
     name = models.CharField(max_length=255)
+    url = models.CharField(max_length=500, help_text="CDN IMG", blank=True)
     image = models.ImageField(blank=False, upload_to='adjusted')
     default = models.BooleanField(default=False)

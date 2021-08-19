@@ -1,29 +1,32 @@
+from tryon.serializers.template import TemplatePostSerializer
 from tryon.models.models import TryOnImage
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from drf_yasg.utils import swagger_auto_schema
 from django.core.files import File
-from urllib import request as req
+from os.path import join as pjoin
+from django.conf import settings
 
-from tryon.serializers import TemplatePostSerializer, CreateTemplateSerializer
+from tryon.serializers import GenTryOnSerializer, TryOnImageModelSerializer
 from tryon.models import Models, ProductNB, TemplatePage
 from tryon.services.cafe.tryon_ftp import send_image_ftp, get_user_info
+from tryon.utils.path import get_static_img_path
 
 
 @swagger_auto_schema(
     method='post',
-    operation_id="Template Post",
-    operation_description="Step3. 상세 페이지 생성에서 사용되는 API",
-    request_body=TemplatePostSerializer,
+    operation_id="gen_tryon_models",
+    operation_description="Step3. 상세 페이지 생성에서 사용되는 API, TryOn 모델을 반환합니다",
+    request_body=GenTryOnSerializer,
     responses={
-        200: CreateTemplateSerializer,
+        200: TryOnImageModelSerializer(many=True),
         404: "Not Found",
     },
     tags=['Template']
 )
 @api_view(['POST'])
-def create_template(request):
-    serializer = TemplatePostSerializer(data=request.data)
+def gen_tryon_models(request):
+    serializer = GenTryOnSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     d = serializer.validated_data
 
@@ -31,23 +34,51 @@ def create_template(request):
     model_imgs_path = [
         p.image.path for p in Models.objects.filter(id__in=d['model_ids'])]
     nobg_img_path = nobg_post.image.path
-
+    user_info = get_user_info()
     imgdict_list = generate_tryon(
-        prodnb_img_path=nobg_img_path, model_imgs_path=model_imgs_path)
-    htmls = make_html('')
+        prodnb_img_path=nobg_img_path, model_imgs_path=model_imgs_path, user_info=user_info)
     tryons = []
     for d in imgdict_list:
         if 'model' in d['src']:
-            tryons.append(TryOnImage(name="", image=File(
+            ftp_url = user_info['shop_url'] + \
+                pjoin(settings.BASE_FTP_DIR, d['dest'])
+            tryons.append(TryOnImage(name="", url=ftp_url, image=File(
                 open(d['src'], 'rb')), default=False))
     tryon_imgs = TryOnImage.objects.bulk_create(tryons)
-    template = TemplatePage.objects.create(
-        title=nobg_post.title, name='name', part=nobg_post.part, **htmls)
-    serializer = CreateTemplateSerializer(
-        {"template": template, "tryon_imgs": tryon_imgs})
+    serializer = TryOnImageModelSerializer(tryon_imgs, many=True)
+    for d in serializer.data:
+        d['image'] = get_static_img_path(d['image'])
     return JsonResponse(serializer.data, safe=False)
 
-# Temp =====
+
+def generate_tryon(prodnb_img_path, model_imgs_path, user_info):
+    imgdict_list = []
+    for i in model_imgs_path:
+        imgdict_list.append({"src": i, "dest": f'models/{i.split("/")[-1]}'})
+    imgdict_list.append(
+        {"src": prodnb_img_path, "dest": f'products/{prodnb_img_path.split("/")[-1]}'})
+    send_image_ftp(imgdict_list, **user_info)
+    return imgdict_list
+
+
+@swagger_auto_schema(
+    method='post',
+    operation_id="create_template",
+    operation_description="Step3. 상세 페이지 생성에서 사용되는 API",
+    request_body=TemplatePostSerializer,
+    responses={
+        200: TryOnImageModelSerializer(many=True),
+        404: "Not Found",
+    },
+    tags=['Template']
+)
+@api_view(['POST'])
+def create_template(request):
+    serializer = TemplatePostSerializer(data=request.data).is_valid(True)
+    d = serializer.validated_data
+    TryOnImage.objects.filter(pk__in=d['tryon_ids'])
+    htmls = make_html('')
+    template = TemplatePage.objects.create()
 
 
 def make_html(images):
@@ -56,15 +87,3 @@ def make_html(images):
         "grid": "<h2> Grid </ h2>",
         "zigzag": "<h3> ZigZag </ h3>",
     }
-
-
-def generate_tryon(prodnb_img_path, model_imgs_path):
-    imgdict_list = []
-    for i in model_imgs_path:
-        imgdict_list.append({"src": i, "dest": f'models/{i.split("/")[-1]}'})
-    imgdict_list.append(
-        {"src": prodnb_img_path, "dest": f'products/{prodnb_img_path.split("/")[-1]}'})
-    send_image_ftp(imgdict_list, **get_user_info())
-    return imgdict_list
-
-# ===== Temp

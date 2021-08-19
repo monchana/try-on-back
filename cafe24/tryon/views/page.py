@@ -17,9 +17,6 @@ from drf_yasg.utils import swagger_auto_schema
 )
 @api_view(['POST'])
 def register_page(request):
-    try:
-        serializer = RegisterTemplateSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        return HttpResponse(status=200)
-    except Exception as e:
-        return HttpResponse(status=404)
+    serializer = RegisterTemplateSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    return HttpResponse(status=200)

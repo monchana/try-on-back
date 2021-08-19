@@ -143,3 +143,5 @@ MEDIA_ROOT = os.path.join(TRYON_DIR, MEDIA_URL)
 REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'tryon.exceptions.custom_exception_handler'
 }
+
+BASE_FTP_DIR = "/web/tryon/"

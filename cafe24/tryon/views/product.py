@@ -1,11 +1,11 @@
 from django.http import JsonResponse
-from django.conf import settings
 from rest_framework.parsers import MultiPartParser, FileUploadParser
 from rest_framework.decorators import api_view, parser_classes
 from drf_yasg.utils import swagger_auto_schema
 
 from tryon.serializers import ProductNBSerializer, ProductSerializer
 from tryon.models import ProductNB
+from tryon.utils.path import get_static_img_path
 
 
 @swagger_auto_schema(
@@ -32,7 +32,7 @@ def product_image(request):
         image=nb_img, part=data['part'], title=new_title, product=product)
     serializer = ProductNBSerializer(nobg_post)
     data = serializer.data
-    data['image'] = data['image'].replace(settings.MEDIA_ROOT, '/')
+    data['image'] = get_static_img_path(data['image'])
     return JsonResponse(data, safe=False)
 
 

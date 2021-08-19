@@ -1,7 +1,7 @@
 import ftplib
-from os.path import join as pjoin
+from django.conf import settings
 
-BASE_FTP_DIR = "/web/tryon/"
+from os.path import join as pjoin
 
 
 def send_image_ftp(imgdict_list, shop_url, user, pwd):
@@ -10,7 +10,7 @@ def send_image_ftp(imgdict_list, shop_url, user, pwd):
     ftp.retrlines('LIST')
     for d in imgdict_list:
         file = open(d['src'], "rb")
-        path = pjoin(BASE_FTP_DIR, d['dest'])
+        path = pjoin(settings.BASE_FTP_DIR, d['dest'])
         ftp_mkdir(ftp, root="/", dest=path)
         files = ftp.nlst(path[:path.rfind("/")])
         if path not in files:
