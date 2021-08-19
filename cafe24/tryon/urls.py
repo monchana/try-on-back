@@ -25,6 +25,7 @@ router.register(r'model', TryModelViewSet, basename='models')
 urlpatterns = [
     path('product/', product_image),  # step2
     path('gen_tryon_models/', gen_tryon_models),  # step3
+    path('create_template/', create_template),  # step3
     path('register_page/', register_page),  # step4
 
     # Auth

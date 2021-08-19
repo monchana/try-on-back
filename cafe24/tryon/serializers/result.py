@@ -13,3 +13,4 @@ class RegisterTemplateSerializer(serializers.Serializer):
     productnb_id = serializers.IntegerField()
     layout = serializers.CharField()
     title = serializers.CharField()
+    user_id = serializers.CharField()

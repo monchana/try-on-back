@@ -48,3 +48,7 @@ def get_user_info():
         "user": "tjagksro",
         "pwd": "Fitzme123!@",
     }
+
+
+def get_ftp_img_url(shop_url, dest_url):
+    return shop_url + pjoin(settings.BASE_FTP_DIR, dest_url)

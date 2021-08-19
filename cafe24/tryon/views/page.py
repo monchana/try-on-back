@@ -1,7 +1,11 @@
-from django.http import HttpResponse
+from rest_framework import status
+from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from tryon.serializers import RegisterTemplateSerializer
 from drf_yasg.utils import swagger_auto_schema
+from tryon.services.cafe.cafe import Cafe
+
+from tryon.models.models import ProductNB, TemplatePage
+from tryon.serializers import RegisterTemplateSerializer
 
 
 @swagger_auto_schema(
@@ -19,4 +23,35 @@ from drf_yasg.utils import swagger_auto_schema
 def register_page(request):
     serializer = RegisterTemplateSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
-    return HttpResponse(status=200)
+
+    data = serializer.validated_data
+    template = TemplatePage.objects.get(pk=data['template_id'])
+    html = getattr(template, data['layout'])
+    prod = ProductNB.objects.get(pk=data['productnb_id'])
+    pub_title = data['title']
+    cafe = Cafe()
+    result = cafe.register_prod(
+        shop_id=data["user_id"],
+        json={
+            "shop_no": 1,
+            "request": {
+                "display": "T",
+                "selling": "T",
+                "description": "<h1> Test </h1> <img src='https://cdn.pixabay.com/photo/2018/05/17/06/22/dog-3407906_960_720.jpg' />",
+                "detail_image": "/web/product/medium/202108/22585dfd9401361d03d7449ec1056f36.png",
+                "add_category_no": [
+                    {
+                        "category_no": 43,
+                        "recommend": "F",
+                        "new": "T"
+                    }
+                ],
+                "product_name": "asd",
+                "supply_price": 4000,
+                "price": 12300
+            }
+        }
+    )
+    if result is True:
+        return Response(status=status.HTTP_201_CREATED)
+    return Response(status=status.HTTP_400_BAD_REQUEST)

@@ -26,6 +26,7 @@ class Product(GenderModel):
 
 
 class ProductNB(models.Model):
+    url = models.CharField(max_length=500, help_text="CDN IMG", blank=True)
     image = models.ImageField(blank=False, upload_to='background_crop')
     title = models.CharField(max_length=200)
     part = models.CharField(max_length=50)

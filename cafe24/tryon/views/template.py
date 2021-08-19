@@ -1,15 +1,15 @@
-from tryon.serializers.template import TemplatePostSerializer
+from tryon.serializers.template import TemplateModelSerializer, TemplatePostSerializer
 from tryon.models.models import TryOnImage
 from django.http import JsonResponse
+from rest_framework.response import Response
+from rest_framework import status
 from rest_framework.decorators import api_view
 from drf_yasg.utils import swagger_auto_schema
 from django.core.files import File
-from os.path import join as pjoin
-from django.conf import settings
 
 from tryon.serializers import GenTryOnSerializer, TryOnImageModelSerializer
 from tryon.models import Models, ProductNB, TemplatePage
-from tryon.services.cafe.tryon_ftp import send_image_ftp, get_user_info
+from tryon.services.cafe.tryon_ftp import get_ftp_img_url, send_image_ftp, get_user_info
 from tryon.utils.path import get_static_img_path
 
 
@@ -39,9 +39,13 @@ def gen_tryon_models(request):
         prodnb_img_path=nobg_img_path, model_imgs_path=model_imgs_path, user_info=user_info)
     tryons = []
     for d in imgdict_list:
-        if 'model' in d['src']:
-            ftp_url = user_info['shop_url'] + \
-                pjoin(settings.BASE_FTP_DIR, d['dest'])
+        if 'product' in d['dest']:
+            nobg_post.url = get_ftp_img_url(
+                shop_url=user_info['shop_url'], dest_url=d['dest'])
+            nobg_post.save()
+        elif 'model' in d['src']:
+            ftp_url = get_ftp_img_url(
+                shop_url=user_info['shop_url'], dest_url=d['dest'])
             tryons.append(TryOnImage(name="", url=ftp_url, image=File(
                 open(d['src'], 'rb')), default=False))
     tryon_imgs = TryOnImage.objects.bulk_create(tryons)
@@ -67,21 +71,25 @@ def generate_tryon(prodnb_img_path, model_imgs_path, user_info):
     operation_description="Step3. 상세 페이지 생성에서 사용되는 API",
     request_body=TemplatePostSerializer,
     responses={
-        200: TryOnImageModelSerializer(many=True),
+        200: TemplateModelSerializer,
         404: "Not Found",
     },
     tags=['Template']
 )
 @api_view(['POST'])
 def create_template(request):
-    serializer = TemplatePostSerializer(data=request.data).is_valid(True)
+    serializer = TemplatePostSerializer(data=request.data)
+    serializer.is_valid(True)
     d = serializer.validated_data
-    TryOnImage.objects.filter(pk__in=d['tryon_ids'])
-    htmls = make_html('')
-    template = TemplatePage.objects.create()
+    model_urls = TryOnImage.objects.filter(
+        pk__in=d['tryon_ids']).values_list("url", flat=True)
+    htmls = make_html(image_urls=model_urls)
+    template = TemplatePage.objects.create(
+        name="test", title="test", part="test", **htmls)
+    return Response(data=TemplateModelSerializer(template).data, status=status.HTTP_200_OK)
 
 
-def make_html(images):
+def make_html(image_urls):
     return {
         "single_line": "<h1> Single line </ h1>",
         "grid": "<h2> Grid </ h2>",
