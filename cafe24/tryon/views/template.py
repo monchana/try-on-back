@@ -1,5 +1,5 @@
 from tryon.serializers.template import TemplateModelSerializer, TemplatePostSerializer
-from tryon.models.models import TryOnImage
+from tryon.models import TryOnImage
 from django.http import JsonResponse
 from rest_framework.response import Response
 from rest_framework import status
@@ -49,10 +49,12 @@ def gen_tryon_models(request):
             tryons.append(TryOnImage(name="", url=ftp_url, image=File(
                 open(d['src'], 'rb')), default=False))
     tryon_imgs = TryOnImage.objects.bulk_create(tryons)
-    serializer = TryOnImageModelSerializer(tryon_imgs, many=True)
+    unique_urls = set(map(lambda x: x.url, tryon_imgs))
+    serializer = TryOnImageModelSerializer(
+        TryOnImage.objects.filter(url__in=unique_urls), many=True)
     for d in serializer.data:
         d['image'] = get_static_img_path(d['image'])
-    return JsonResponse(serializer.data, safe=False)
+    return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
 def generate_tryon(prodnb_img_path, model_imgs_path, user_info):

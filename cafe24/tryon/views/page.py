@@ -4,7 +4,7 @@ from drf_yasg.utils import swagger_auto_schema
 from tryon.services.cafe.cafe import Cafe
 from django.conf import settings
 
-from tryon.models.models import ProductNB, TemplatePage
+from tryon.models import ProductNB, TemplatePage
 from tryon.serializers import RegisterTemplateSerializer
 
 

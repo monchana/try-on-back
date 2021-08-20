@@ -1,7 +1,7 @@
 import requests
 from django.db import transaction
 from tryon.services.cafe.cafe import Cafe
-from tryon.models.models import ProductNB, TemplatePage
+from tryon.models import ProductNB, TemplatePage
 from tryon.exceptions.service import InvalidSerializerType
 from tryon.services.cafe.tryon_ftp import get_user_info, send_image_ftp
 

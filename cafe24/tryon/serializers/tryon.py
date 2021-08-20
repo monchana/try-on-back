@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from tryon.models.models import TryOnImage
+from tryon.models import TryOnImage
 
 
 class TryOnImageModelSerializer(serializers.ModelSerializer):
