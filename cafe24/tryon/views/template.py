@@ -1,5 +1,6 @@
 import json
 import os
+import pdb
 from tryon.serializers.template import TemplateModelSerializer, TemplatePostSerializer
 from tryon.models import TryOnImage
 from rest_framework.response import Response
@@ -72,10 +73,18 @@ def generate_tryon(nb_prod_path, product, model_imgs_path, user_info):
     models_path = list(map(lambda p: p.replace("models", pjoin(
         settings.PRE_DIR, "image")).split(".")[0] + ".jpg", model_imgs_path))
     prod_name = os.path.basename(prod_path).split(".")[0]
-    # product.part
-    res = requests.post(url="http://127.0.0.1:8523", data=json.dumps({
-        "cloth": prod_path, "edge": mask_path, "models": models_path, "dest": pjoin(settings.PRE_DIR, "tryon", prod_name)
-    }))
+
+    if product.part == '하의':
+        # pdb.set_trace()
+        res = requests.post(url="http://127.0.0.1:8524", data=json.dumps({
+            'dataroot': settings.PRE_DIR, 'models': models_path, 'cloth': prod_path
+        }))
+
+    else:
+        res = requests.post(url="http://127.0.0.1:8523", data=json.dumps({
+            "cloth": prod_path, "edge": mask_path, "models": models_path, "dest": pjoin(settings.PRE_DIR, "tryon", prod_name)
+        }))
+
     try_img_path_list = res.json()
     for i in try_img_path_list:
         imgdict_list.append(
