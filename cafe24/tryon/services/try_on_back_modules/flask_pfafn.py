@@ -1,5 +1,4 @@
 from flask import Flask, request
-from flask_restx import Resource, Api
 from tryongenerator.PF_AFN.PF_AFN_test.module import PF_AFN
 import json
 import cv2
@@ -9,12 +8,12 @@ osp = os.path
 pfafn = PF_AFN()
 
 HOST = '127.0.0.1'
-PORT = 8523        
+PORT = 8523
 
 app = Flask(__name__)
-api = Api(app)
 
-@app.route('/',  methods=['POST'])
+
+@app.route('/', methods=['POST'])
 def createPFAFN():
     content = request.data
     data_dict = json.loads(content)
@@ -24,6 +23,8 @@ def createPFAFN():
     models_path = data_dict['models']
 
     dest_dir = data_dict['dest']
+    if not os.path.isdir(dest_dir):
+        os.makedirs(dest_dir)
 
     saved_dest = []
     for model in models_path:
@@ -35,6 +36,7 @@ def createPFAFN():
     saved_json = json.dumps(saved_dest)
 
     return saved_json
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=PORT)

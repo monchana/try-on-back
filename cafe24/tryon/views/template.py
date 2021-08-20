@@ -1,11 +1,15 @@
+import json
+import os
 from tryon.serializers.template import TemplateModelSerializer, TemplatePostSerializer
 from tryon.models import TryOnImage
-from django.http import JsonResponse
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
 from drf_yasg.utils import swagger_auto_schema
 from django.core.files import File
+import requests
+from django.conf import settings
+from os.path import join as pjoin
 
 from tryon.serializers import GenTryOnSerializer, TryOnImageModelSerializer
 from tryon.models import Models, ProductNB, TemplatePage
@@ -32,11 +36,13 @@ def gen_tryon_models(request):
 
     nobg_post = ProductNB.objects.get(id=d['nobg_id'])
     model_imgs_path = [
-        p.image.path for p in Models.objects.filter(id__in=d['model_ids'])]
-    nobg_img_path = nobg_post.image.path
+        p.image.name for p in Models.objects.filter(id__in=d['model_ids'])]
     user_info = get_user_info()
     imgdict_list = generate_tryon(
-        prodnb_img_path=nobg_img_path, model_imgs_path=model_imgs_path, user_info=user_info)
+        nb_prod_path=nobg_post.image.path,
+        product=nobg_post.product,
+        model_imgs_path=model_imgs_path,
+        user_info=user_info, )
     tryons = []
     for d in imgdict_list:
         if 'product' in d['dest']:
@@ -57,12 +63,27 @@ def gen_tryon_models(request):
     return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
-def generate_tryon(prodnb_img_path, model_imgs_path, user_info):
+def generate_tryon(nb_prod_path, product, model_imgs_path, user_info):
     imgdict_list = []
-    for i in model_imgs_path:
-        imgdict_list.append({"src": i, "dest": f'models/{i.split("/")[-1]}'})
+    prod_path = product.image.name.replace(
+        "products", pjoin(settings.PRE_DIR, "cloth"))
+    mask_path = product.image.name.replace("products", pjoin(
+        settings.PRE_DIR, "cloth-mask")).split(".")[0] + ".jpg"
+    models_path = list(map(lambda p: p.replace("models", pjoin(
+        settings.PRE_DIR, "image")).split(".")[0] + ".jpg", model_imgs_path))
+    prod_name = os.path.basename(prod_path).split(".")[0]
+    # product.part
+    res = requests.post(url="http://127.0.0.1:8523", data=json.dumps({
+        "cloth": prod_path, "edge": mask_path, "models": models_path, "dest": pjoin(settings.PRE_DIR, "tryon", prod_name)
+    }))
+    import pdb
+    pdb.set_trace()
+    try_img_path_list = res.json()
+    for i in try_img_path_list:
+        imgdict_list.append(
+            {"src": i, "dest": f'models/{os.path.basename(i)}'})
     imgdict_list.append(
-        {"src": prodnb_img_path, "dest": f'products/{prodnb_img_path.split("/")[-1]}'})
+        {"src": nb_prod_path, "dest": f'products/{os.path.basename(nb_prod_path)}'})
     send_image_ftp(imgdict_list, **user_info)
     return imgdict_list
 
