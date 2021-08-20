@@ -1,10 +1,7 @@
 import cv2
 import os
-import json
-from .pose import get_keypoints
 from .pad_resize import pad
 from os.path import join as pjoin
-from math import ceil
 import requests
 import numpy as np
 from .html import line, grid
@@ -48,7 +45,8 @@ class TryOnUtils():
         return new_img
 
     # product image
-    def detect_bg(self, img_path, no_bg_dir, mask_dir):
+    # def detect_bg(self, img):
+    def detect_bg(self, img_path, no_bg_dir):
         '''
             input: img_dir: path to img
             output: img binary file
@@ -59,17 +57,24 @@ class TryOnUtils():
 
         response = requests.post(
             'https://api.remove.bg/v1.0/removebg',
+            # files={'image_file': img},
             files={'image_file': open(img_path, 'rb')},
             data={'size': 'auto'},
             headers={'X-Api-Key': 'LRCm7A4eEBsHHrYUz9cqSL9D'},
         )
         if response.status_code == requests.codes.ok:
-            with open(pjoin(no_bg_save_dir, img_name + '.png'), 'wb') as out:
+            # return response.content
+            path = pjoin(no_bg_save_dir, img_name + '.png')
+            with open(path, 'wb') as out:
                 out.write(response.content)
+            return path
 
         else:
             print("Error:", response.status_code, response.text)
             return None
+
+    def make_cloth_mask(self, no_bg_save_dir, img_path, mask_dir):
+        img_name = img_path.split('/')[-1].split('.')[0]
 
         img = cv2.imread(pjoin(no_bg_save_dir, img_name +
                          '.png'), cv2.IMREAD_UNCHANGED)
@@ -77,7 +82,7 @@ class TryOnUtils():
 
         cv2.imwrite(pjoin(mask_dir, img_name + '.jpg'), new_img)
 
-    def make_html(img_urls):
+    def make_html(self, img_urls):
         '''
             input: img_urls: list of paths to imgs
             output: html dict

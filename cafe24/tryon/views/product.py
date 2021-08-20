@@ -1,8 +1,13 @@
+import os
+from django.conf import settings
 from django.http import JsonResponse
 from rest_framework.parsers import MultiPartParser, FileUploadParser
 from rest_framework.decorators import api_view, parser_classes
 from drf_yasg.utils import swagger_auto_schema
+from os.path import join as pjoin
+from django.core.files import File
 
+from tryon.services.try_on_back_modules.tryongenerator.utils.util_module import TryOnUtils
 from tryon.serializers import ProductNBSerializer, ProductSerializer
 from tryon.models import ProductNB
 from tryon.utils.path import get_static_img_path
@@ -27,15 +32,14 @@ def product_image(request):
     product = serializer.save()
     data = serializer.validated_data
     new_title = 'Fancy cloth for summer'
-    nb_img = get_no_back_img(data['image'])
-    nobg_post = ProductNB.objects.create(
-        image=nb_img, part=data['part'], title=new_title, product=product)
+    utils = TryOnUtils()
+    saved_path = utils.detect_bg(
+        img_path=product.image.path, no_bg_dir=pjoin(settings.MEDIA_ROOT))
+    nobg_post = ProductNB.objects.create(image=File(
+        open(saved_path, "rb")), part=data['part'], title=new_title, product=product)
+    os.remove(saved_path)
+
     serializer = ProductNBSerializer(nobg_post)
     data = serializer.data
     data['image'] = get_static_img_path(data['image'])
     return JsonResponse(data, safe=False)
-
-
-# Temp
-def get_no_back_img(img):
-    return img
