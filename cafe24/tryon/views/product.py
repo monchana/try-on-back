@@ -1,4 +1,6 @@
 import os
+import requests
+import json
 from django.conf import settings
 from django.http import JsonResponse
 from rest_framework.parsers import MultiPartParser, FileUploadParser
@@ -31,12 +33,13 @@ def product_image(request):
     serializer.is_valid(raise_exception=True)
     product = serializer.save()
     data = serializer.validated_data
-    new_title = 'Fancy cloth for summer'
     utils = TryOnUtils()
     saved_path = utils.detect_bg(
         img_path=product.image.path, no_bg_dir=pjoin(settings.MEDIA_ROOT))
     utils.make_cloth_mask(img_path=saved_path, mask_dir=pjoin(
         settings.PRE_DIR, "cloth-mask"))
+    new_title = requests.post('http://127.0.0.1:8522',
+                              data=json.dumps(saved_path)).json()
     nobg_post = ProductNB.objects.create(image=File(
         open(saved_path, "rb")), part=data['part'], title=new_title, product=product)
     os.remove(saved_path)
