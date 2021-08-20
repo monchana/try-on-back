@@ -145,3 +145,4 @@ REST_FRAMEWORK = {
 }
 
 BASE_FTP_DIR = "/web/tryon/"
+PRE_DIR = os.path.join(MEDIA_ROOT, "preprocess")
