@@ -34,7 +34,6 @@ class TryOnUtils():
 
     def png2monojpg(self, img):
         h, w, c = img.shape
-
         if c < 4:
             return None  # FAIL, 알파채널 없음
 
@@ -60,7 +59,7 @@ class TryOnUtils():
             # files={'image_file': img},
             files={'image_file': open(img_path, 'rb')},
             data={'size': 'auto'},
-            headers={'X-Api-Key': 'LRCm7A4eEBsHHrYUz9cqSL9D'},
+            headers={'X-Api-Key': 'pZU68aMNGWM9QqiA696DCAym'},
         )
         if response.status_code == requests.codes.ok:
             # return response.content

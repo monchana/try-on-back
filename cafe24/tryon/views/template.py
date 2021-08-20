@@ -1,6 +1,7 @@
 import json
 import os
 import pdb
+from tryon.services.try_on_back_modules.tryongenerator.utils.util_module import TryOnUtils
 from tryon.serializers.template import TemplateModelSerializer, TemplatePostSerializer
 from tryon.models import TryOnImage
 from rest_framework.response import Response
@@ -113,15 +114,8 @@ def create_template(request):
     d = serializer.validated_data
     model_urls = TryOnImage.objects.filter(
         pk__in=d['tryon_ids']).values_list("url", flat=True)
-    htmls = make_html(image_urls=model_urls)
+    utils = TryOnUtils()
+    htmls = utils.make_html(img_urls=map(lambda x: "http://" + x, model_urls))
     template = TemplatePage.objects.create(
         name="test", title="test", part="test", **htmls)
     return Response(data=TemplateModelSerializer(template).data, status=status.HTTP_200_OK)
-
-
-def make_html(image_urls):
-    return {
-        "single_line": "<h1> Single line </ h1>",
-        "grid": "<h2> Grid </ h2>",
-        "zigzag": "<h3> ZigZag </ h3>",
-    }

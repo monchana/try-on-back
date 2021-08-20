@@ -1,4 +1,5 @@
 import os
+from pdb import set_trace
 import requests
 import json
 from django.conf import settings
@@ -34,15 +35,26 @@ def product_image(request):
     product = serializer.save()
     data = serializer.validated_data
     utils = TryOnUtils()
+    utils.pad_overall([product.image.path],
+                      dest_dir=pjoin(settings.PRE_DIR, "cloth"))
+
     saved_path = utils.detect_bg(
         img_path=product.image.path, no_bg_dir=pjoin(settings.MEDIA_ROOT))
-    utils.make_cloth_mask(img_path=saved_path, mask_dir=pjoin(
-        settings.PRE_DIR, "cloth-mask"))
+
+    saved_path_small = utils.detect_bg(
+        img_path=pjoin(settings.PRE_DIR, "cloth", os.path.basename(product.image.name)), no_bg_dir=pjoin(settings.PRE_DIR))
+
     new_title = requests.post('http://127.0.0.1:8522',
                               data=json.dumps(saved_path)).json()
+
     nobg_post = ProductNB.objects.create(image=File(
         open(saved_path, "rb")), part=data['part'], title=new_title, product=product)
+
+    utils.make_cloth_mask(img_path=saved_path_small, mask_dir=pjoin(
+        settings.PRE_DIR, "cloth-mask"))
+
     os.remove(saved_path)
+    os.remove(saved_path_small)
 
     serializer = ProductNBSerializer(nobg_post)
     data = serializer.data

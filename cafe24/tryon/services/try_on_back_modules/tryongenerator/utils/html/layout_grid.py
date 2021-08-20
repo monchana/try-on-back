@@ -25,7 +25,7 @@ def grid(img_urls):
 
     for url in img_urls:
         img_src = f'<img src="{url}">'
-        middele += img_src
+        middle += img_src
 
     end = '''
         </div>
@@ -33,4 +33,4 @@ def grid(img_urls):
     </html>
     '''
 
-    return front+middle+end
+    return front + middle + end
