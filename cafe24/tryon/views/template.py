@@ -49,7 +49,7 @@ def gen_tryon_models(request):
             nobg_post.url = get_ftp_img_url(
                 shop_url=user_info['shop_url'], dest_url=d['dest'])
             nobg_post.save()
-        elif 'model' in d['src']:
+        elif 'model' in d['dest']:
             ftp_url = get_ftp_img_url(
                 shop_url=user_info['shop_url'], dest_url=d['dest'])
             tryons.append(TryOnImage(name="", url=ftp_url, image=File(
@@ -76,8 +76,6 @@ def generate_tryon(nb_prod_path, product, model_imgs_path, user_info):
     res = requests.post(url="http://127.0.0.1:8523", data=json.dumps({
         "cloth": prod_path, "edge": mask_path, "models": models_path, "dest": pjoin(settings.PRE_DIR, "tryon", prod_name)
     }))
-    import pdb
-    pdb.set_trace()
     try_img_path_list = res.json()
     for i in try_img_path_list:
         imgdict_list.append(
