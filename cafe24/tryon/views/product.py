@@ -35,6 +35,8 @@ def product_image(request):
     utils = TryOnUtils()
     saved_path = utils.detect_bg(
         img_path=product.image.path, no_bg_dir=pjoin(settings.MEDIA_ROOT))
+    utils.make_cloth_mask(img_path=saved_path, mask_dir=pjoin(
+        settings.PRE_DIR, "cloth-mask"))
     nobg_post = ProductNB.objects.create(image=File(
         open(saved_path, "rb")), part=data['part'], title=new_title, product=product)
     os.remove(saved_path)

@@ -73,11 +73,12 @@ class TryOnUtils():
             print("Error:", response.status_code, response.text)
             return None
 
-    def make_cloth_mask(self, no_bg_save_dir, img_path, mask_dir):
+    def make_cloth_mask(self, img_path, mask_dir):
+        if not osp.isdir(mask_dir):
+            os.makedirs(mask_dir)
         img_name = img_path.split('/')[-1].split('.')[0]
 
-        img = cv2.imread(pjoin(no_bg_save_dir, img_name +
-                         '.png'), cv2.IMREAD_UNCHANGED)
+        img = cv2.imread(pjoin(img_path), cv2.IMREAD_UNCHANGED)
         new_img = self.png2monojpg(img)
 
         cv2.imwrite(pjoin(mask_dir, img_name + '.jpg'), new_img)
