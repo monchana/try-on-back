@@ -90,7 +90,7 @@ def generate_tryon(nb_prod_path, product, model_imgs_path, user_info):
     try_img_path_list = res.json()
     for i in try_img_path_list:
         imgdict_list.append(
-            {"src": i, "dest": f'models/{os.path.basename(i)}'})
+            {"src": i, "dest": f'models/{os.path.basename(nb_prod_path).split(".")[0]}/{os.path.basename(i)}'})
     imgdict_list.append(
         {"src": nb_prod_path, "dest": f'products/{os.path.basename(nb_prod_path)}'})
     send_image_ftp(imgdict_list, **user_info)
