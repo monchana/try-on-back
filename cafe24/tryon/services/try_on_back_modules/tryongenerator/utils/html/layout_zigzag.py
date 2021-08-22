@@ -14,15 +14,6 @@ def zigzag(img_urls):
                 max-width: 940px;
                 margin: 0 auto;
             }
-
-            .layout-zigzag > div {
-                border: 2px solid #e9ab58;
-                border-radius: 5px;
-                background-color: rgba(233, 171, 88, 0.5);
-                padding: 1em;
-                color: #d9480f;
-            }
-
             .layout-zigzag {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
@@ -32,13 +23,13 @@ def zigzag(img_urls):
             }
     '''
 
-    default_name = ".style_"
+    default_name = "style_"
     for idx in range(len(img_urls)):
         overall = ''''''
-        next_idx_name = default_name+str(idx+1)
-        grid_row = ''' {\n grid-row: '''
+        next_idx_name = '.'+default_name+str(idx+1)
+        grid_row = ''' { grid-row: '''
         grid_row += str(idx+1)
-        grid_row += ''';\n}\n'''
+        grid_row += ''';} '''
 
         overall += overall+next_idx_name+grid_row
         front+= overall
@@ -47,15 +38,15 @@ def zigzag(img_urls):
         </style>
         </head>
         <body>
-        <div class="layout-zigzag">
+        <div class="layout-zigzag"> 
     '''
 
     middle = ''
     
     for url in range(len(img_urls)):
-        each_line = f'''<div class="{default_name+str(url+1)}">\n'''
-        img_src = f'<img src="{img_urls[url]}">\n'
-        end_line = f'''</div>\n'''
+        each_line = f'''<div class="{default_name+str(url+1)}">'''
+        img_src = f'<img src="{img_urls[url]}">'
+        end_line = f'''</div> '''
         middle += each_line + img_src + end_line
 
     end = '''
