@@ -51,10 +51,12 @@ def zigzag(img_urls):
     '''
 
     middle = ''
-
+    
     for url in range(len(img_urls)):
-        img_src = f'<img class="{default_name+str(url+1)}" src="{img_urls[url]}">\n'
-        middle += img_src
+        each_line = f'''<div class="{default_name+str(url+1)}">\n'''
+        img_src = f'<img src="{img_urls[url]}">\n'
+        end_line = f'''</div>\n'''
+        middle += each_line + img_src + end_line
 
     end = '''
         </div>
