@@ -14,8 +14,20 @@ def zigzag(img_urls):
                 max-width: 940px;
                 margin: 0 auto;
             }
+
+            .layout-zigzag > div {
+                border: 2px solid rgba(255, 255, 255, 0.5);
+                border-radius: 5px;
+                background-color: rgba(255, 255, 255, 0.5);
+                padding: 1em;
+                align-items: center;
+                justify-content: center;
+                color: #d9480f;
+            }
+            
             .layout-zigzag {
                 display: grid;
+   
                 grid-template-columns: 1fr 1fr;
             }
             .layout-zigzag div:nth-of-type(even) {
