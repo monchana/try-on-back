@@ -10,6 +10,7 @@ def get_file_path(instance, filename):
 
 class Models(GenderModel, BaseModel):
     image = models.ImageField(blank=False, upload_to=get_file_path)
+    shop_id = models.CharField(max_length=255)
 
     class Meta:
         ordering = ['id']

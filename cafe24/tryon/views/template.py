@@ -58,8 +58,9 @@ def gen_tryon_models(request):
                 open(d['src'], 'rb')), default=False))
     tryon_imgs = TryOnImage.objects.bulk_create(tryons)
     unique_urls = set(map(lambda x: x.url, tryon_imgs))
+    unique_imgs = set(map(lambda x: x.image, tryon_imgs))
     serializer = TryOnImageModelSerializer(
-        TryOnImage.objects.filter(url__in=unique_urls), many=True)
+        TryOnImage.objects.filter(url__in=unique_urls, image__in=unique_imgs), many=True)
     for d in serializer.data:
         d['image'] = get_static_img_path(d['image'])
     return Response(data=serializer.data, status=status.HTTP_200_OK)
@@ -89,7 +90,7 @@ def generate_tryon(nb_prod_path, product, model_imgs_path, user_info):
     try_img_path_list = res.json()
     for i in try_img_path_list:
         imgdict_list.append(
-            {"src": i, "dest": f'models/{os.path.basename(i)}'})
+            {"src": i, "dest": f'models/{os.path.basename(nb_prod_path).split(".")[0]}/{os.path.basename(i)}'})
     imgdict_list.append(
         {"src": nb_prod_path, "dest": f'products/{os.path.basename(nb_prod_path)}'})
     send_image_ftp(imgdict_list, **user_info)
