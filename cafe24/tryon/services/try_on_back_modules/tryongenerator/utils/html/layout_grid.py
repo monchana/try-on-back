@@ -9,15 +9,28 @@ def grid(img_urls):
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Document</title>
         <style>
-            .layout-grid {
+                        .layout-grid {
+                max-width: 600px;
         display: grid;
         grid-template-columns: repeat(3, 1fr);
+                align-items: center;
+                justify-content: center;
+
+
             }  
             .layout-grid>* {
+                margin: 0 auto;
+        display: flex;
+                align-items: center;
+                justify-content: center;
+
+
             }
         </style>
         </head>
         <body>
+        <div class="col-xs-1" align="center">
+
         <div class="layout-grid">
     '''
 
@@ -28,6 +41,7 @@ def grid(img_urls):
         middle += img_src
 
     end = '''
+        </div>
         </div>
     </body>
     </html>
