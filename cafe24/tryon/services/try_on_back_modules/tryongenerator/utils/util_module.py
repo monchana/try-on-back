@@ -4,7 +4,7 @@ from .pad_resize import pad
 from os.path import join as pjoin
 import requests
 import numpy as np
-from .html import line, grid
+from .html import line, grid, zigzag
 
 osp = os.path
 # save all temp images
@@ -91,7 +91,7 @@ class TryOnUtils():
         htmls = {}
         htmls['single_line'] = line(img_urls)
         htmls['grid'] = grid(img_urls)
-        # htmls['zigzag'] = zigzag(img_urls)
-        htmls['zigzag'] = "<h1> Zigzag </h1>"
+        htmls['zigzag'] = zigzag(img_urls)
+        # htmls['zigzag'] = "<h1> Zigzag </h1>"
 
         return htmls
