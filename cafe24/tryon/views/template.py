@@ -116,7 +116,7 @@ def create_template(request):
     model_urls = TryOnImage.objects.filter(
         pk__in=d['tryon_ids']).values_list("url", flat=True)
     utils = TryOnUtils()
-    htmls = utils.make_html(img_urls=map(lambda x: "http://" + x, model_urls))
+    htmls = utils.make_html(img_urls=list(map(lambda x: "http://" + x, model_urls)))
     template = TemplatePage.objects.create(
         name="test", title="test", part="test", **htmls)
     return Response(data=TemplateModelSerializer(template).data, status=status.HTTP_200_OK)
