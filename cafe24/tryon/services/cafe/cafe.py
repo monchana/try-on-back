@@ -3,7 +3,7 @@ from typing import Dict, List
 import base64
 from rest_framework import status
 import requests
-from tryon.exceptions.cafe import CafeTokenNotExistInCache, InvalidToken
+from tryon.exceptions.cafe import AuthCodeExpired, CafeTokenNotExistInCache, InvalidToken
 from tryon.utils.singleton import SingletonInstance
 
 
@@ -100,5 +100,8 @@ class Cafe(SingletonInstance):
             'code': code,
             'redirect_uri': REDIRECT_URL
         }, headers=TOKEN_HEADER)
+        if resp.status_code == 400 and 'expired' in resp.json()['error_description']:
+            raise AuthCodeExpired()
+            
         resp.raise_for_status()
         return Token(**resp.json())

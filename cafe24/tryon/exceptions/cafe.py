@@ -6,6 +6,12 @@ class RequireCafeAuthCode(APIException):
     default_detail = 'Cafe 24 Authentication Code is not exist in Parameter'
     default_code = 'cafe24_auth_code_is_required'
 
+class AuthCodeExpired(APIException):
+    status_code = 400
+    default_detail = 'Cafe 24 Authentication Code is expired'
+    default_code = 'cafe24_auth_code_is_expired'
+
+
 
 class CafeTokenNotExistInCache(APIException):
     status_code = 400
