@@ -19,9 +19,7 @@ def zigzag(img_urls):
 
             .layout-zigzag > div {
                 display: flex;
-                border: 2px solid rgba(255, 255, 255, 0.5);
                 border-radius: 5px;
-                background-color: rgba(255, 255, 255, 0.5);
                 padding: 1em;
                 justify-content: center;
                 color: #d9480f;
@@ -53,7 +51,9 @@ def zigzag(img_urls):
         </style>
         </head>
         <body>
-        <div class="layout-zigzag"> 
+        
+        <div style="background-color: #f6f5ef;"> 
+            <div class="layout-zigzag"> 
     '''
 
     middle = ''
@@ -65,6 +65,7 @@ def zigzag(img_urls):
         middle += each_line + img_src + end_line
 
     end = '''
+            </div>
         </div>
     </body>
     </html>

@@ -23,7 +23,7 @@ def line(img_urls):
         </style>
     </head>
     <body>
-        <div class="col-xs-1" align="center">
+        <div style="background-color: #f6f5ef;" class="col-xs-1" align="center">
             <div class="layout-line">
     '''
     
