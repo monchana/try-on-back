@@ -45,7 +45,7 @@ def zigzag(img_urls):
         '''
         else:
             middle += f'''
-            <div style="display: flex; margin-bottom: 1vh; justify-content: center;">
+            <div style="display: flex; margin-bottom: 1dvh; justify-content: center;">
                 <div style="position: relative; text-align: start; margin-top: auto; margin-bottom: auto; padding-right: 5vw;">
                     <h1> {get_head()} </h1>
                     <div style="width: 20vw; font-style: italic"> 
