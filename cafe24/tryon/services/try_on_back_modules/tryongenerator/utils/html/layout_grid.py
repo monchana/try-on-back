@@ -1,4 +1,7 @@
 
+from tryon.services.try_on_back_modules.tryongenerator.utils.html.txts import *
+
+
 def grid(img_urls):
     front = '''
         <!DOCTYPE html>
@@ -36,9 +39,18 @@ def grid(img_urls):
 
     middle = ''
 
-    for url in img_urls:
+    for idx, url in enumerate(img_urls):
         img_src = f'<img src="{url}">'
         middle += img_src
+        if (idx + 1) % 3 == 0:
+            middle += f'''
+            <div style="grid-column-start: 1;text-align: center; grid-column-end: 4; align-items: start; min-height: 20vh;">
+                <h1> {get_head()} </h1>
+                <div style="position: absolute; width: 33vw; font-style: italic; margin-top: 10vh;"> 
+                    "{get_content()}"
+                </div> 
+            </div>                
+            '''.replace("\n", "") 
 
     end = '''
         </div>

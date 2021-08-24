@@ -1,3 +1,5 @@
+from tryon.services.try_on_back_modules.tryongenerator.utils.html.txts import get_content, get_head
+
 
 def line(img_urls):
     front = '''
@@ -14,7 +16,7 @@ def line(img_urls):
         }
         .layout-line > * {
             display: block;
-            justify-content: center;
+            justify-content: start;
             align-self: center;
 
             margin: 0 auto;
@@ -31,7 +33,17 @@ def line(img_urls):
 
     for url in img_urls:
         img_src = f'<img src="{url}">'
-        middle += img_src
+        middle += f'''
+        <div style="display: flex"> 
+            {img_src} 
+            <div style="position: relative; text-align: start">
+                <h1 style=""> {get_head()} </h1>
+                <div style="position: absolute; width: 33vw; font-style: italic"> 
+                    "{get_content()}"
+                </div> 
+            </div>
+        </div>
+        '''.replace("\n", "")
     
     end = '''
         </div>
