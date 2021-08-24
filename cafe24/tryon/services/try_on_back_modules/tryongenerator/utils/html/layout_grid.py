@@ -15,7 +15,7 @@ def grid(img_urls):
             .layout-grid {
                 width: 46vw;
                 display: grid;
-                grid-template-columns: repeat(3, 1fr);
+                grid-template-columns: repeat(2, 1fr);
                 align-items: center;
                 justify-content: center;
 
@@ -42,7 +42,7 @@ def grid(img_urls):
     for idx, url in enumerate(img_urls):
         img_src = f'<img src="{url}">'
         middle += img_src
-        if (idx + 1) % 3 == 0:
+        if (idx + 1) % 2 == 0:
             middle += f'''
             <div style="display: block; margin-top: 3vh; grid-column-start: 1;text-align: center; grid-column-end: 4; align-items: start;">
                 <h1> {get_head()} </h1>
