@@ -12,18 +12,18 @@ def grid(img_urls):
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Document</title>
         <style>
-                        .layout-grid {
-                max-width: 600px;
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
+            .layout-grid {
+                width: 46vw;
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
                 align-items: center;
                 justify-content: center;
 
 
             }  
             .layout-grid>* {
-                margin: 0 auto;
-        display: flex;
+                margin: 0 0.5vw;
+                display: flex;
                 align-items: center;
                 justify-content: center;
 
@@ -44,9 +44,9 @@ def grid(img_urls):
         middle += img_src
         if (idx + 1) % 3 == 0:
             middle += f'''
-            <div style="grid-column-start: 1;text-align: center; grid-column-end: 4; align-items: start; min-height: 20vh;">
+            <div style="display: block; margin-top: 3vh; grid-column-start: 1;text-align: center; grid-column-end: 4; align-items: start;">
                 <h1> {get_head()} </h1>
-                <div style="position: absolute; width: 33vw; font-style: italic; margin-top: 10vh;"> 
+                <div style="width: 35vw; font-style: italic; margin-left: auto; margin-right: auto;  margin-bottom: 5vh;"> 
                     "{get_content()}"
                 </div> 
             </div>                

@@ -1,4 +1,4 @@
-
+from tryon.services.try_on_back_modules.tryongenerator.utils.html.txts import get_content, get_head
 def zigzag(img_urls):
 
     front = '''
@@ -11,43 +11,15 @@ def zigzag(img_urls):
         <title>Document</title>
         <style>
              .layout-zigzag {
-                max-width: 600px;
+                width: 46vw;
                 margin: 0 auto;
                 align-self: center;
                 justify-content: center;
             }
 
-            .layout-zigzag > div {
-                display: flex;
-                border-radius: 5px;
-                padding: 1em;
-                justify-content: center;
-                color: #d9480f;
-            }
-            
-            .layout-zigzag {
-                display: grid;
-                align-self: center;
-                justify-content: center;
-                grid-template-columns: 1fr 1fr;
-            }
             .layout-zigzag div:nth-of-type(even) {
                 grid-column: 2;
             }
-    '''
-
-    default_name = "style_"
-    for idx in range(len(img_urls)):
-        overall = ''''''
-        next_idx_name = '.'+default_name+str(idx+1)
-        grid_row = ''' { grid-row: '''
-        grid_row += str(idx+1)
-        grid_row += ''';} '''
-
-        overall += overall+next_idx_name+grid_row
-        front+= overall
-
-    front_second = '''
         </style>
         </head>
         <body>
@@ -58,11 +30,30 @@ def zigzag(img_urls):
 
     middle = ''
     
-    for url in range(len(img_urls)):
-        each_line = f'''<div class="{default_name+str(url+1)}">'''
-        img_src = f'<img src="{img_urls[url]}">'
-        end_line = f'''</div> '''
-        middle += each_line + img_src + end_line
+    for url_idx in range(len(img_urls)):
+        if url_idx % 2 == 0:
+            middle += f'''
+            <div style="display: flex; margin-bottom: 1vh; justify-content: center;">
+                <img style="width: 192px; height: 256px;" src="{img_urls[url_idx]}">
+                <div style="position: relative; text-align: start; margin-top: auto; margin-bottom: auto;  padding-left: 5vw;">
+                    <h1> {get_head()} </h1>
+                    <div style="width: 20vw; font-style: italic"> 
+                        "{get_content()}"
+                    </div> 
+                </div>                
+            </div>
+        '''
+        else:
+            middle += f'''
+            <div style="display: flex; margin-bottom: 1vh; justify-content: center;">
+                <div style="position: relative; text-align: start; margin-top: auto; margin-bottom: auto; padding-right: 5vw;">
+                    <h1> {get_head()} </h1>
+                    <div style="width: 20vw; font-style: italic"> 
+                        "{get_content()}"
+                    </div> 
+                </div>            
+                <img style="width: 192px; height: 256px;" src="{img_urls[url_idx]}">
+            </div>'''
 
     end = '''
             </div>
@@ -71,4 +62,4 @@ def zigzag(img_urls):
     </html>
     '''
 
-    return front + front_second + middle + end
+    return front + middle + end

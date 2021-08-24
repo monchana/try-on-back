@@ -12,7 +12,7 @@ def line(img_urls):
         <title>Document</title>
         <style>
         .layout-line {
-            max-width: 50%;
+            width: 46vw;
         }
         .layout-line > * {
             display: block;
@@ -32,13 +32,13 @@ def line(img_urls):
     middle = ''
 
     for url in img_urls:
-        img_src = f'<img src="{url}">'
+        img_src = f'<img style="width: fit-content;" src="{url}">'
         middle += f'''
-        <div style="display: flex"> 
+        <div style="display: flex; height: 30vh; justify-content: start;"> 
             {img_src} 
-            <div style="position: relative; text-align: start">
-                <h1 style=""> {get_head()} </h1>
-                <div style="position: absolute; width: 33vw; font-style: italic"> 
+            <div style="position: relative; text-align: start; margin-left: 3vw;">
+                <h1> {get_head()} </h1>
+                <div style=" width: 15vw; font-style: italic"> 
                     "{get_content()}"
                 </div> 
             </div>
