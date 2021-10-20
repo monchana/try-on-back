@@ -43,9 +43,7 @@ def product_image(request):
 
     saved_path_small = utils.detect_bg(
         img_path=pjoin(settings.PRE_DIR, "cloth", os.path.basename(product.image.name)), no_bg_dir=pjoin(settings.PRE_DIR))
-
-    new_title = requests.post('http://127.0.0.1:8522',
-                              data=json.dumps(saved_path)).json()
+    new_title = requests.post('http://127.0.0.1:8522',data=json.dumps(saved_path)).json()
 
     nobg_post = ProductNB.objects.create(image=File(
         open(saved_path, "rb")), part=data['part'], title=new_title, product=product)
