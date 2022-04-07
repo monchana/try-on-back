@@ -57,7 +57,13 @@ MIDDLEWARE = [
 # CORS 관련 추가
 # CORS_ORIGIN_WHITELIST = ['https://try-on.netlify.app']
 CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_CREDENTIALS = False
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = [
+    # 허용할 Origin 추가
+    "http://pan.snu.ac.kr:8085",
+    "http://localhost:8080",
+    "http://localhost:8081",
+]
 
 
 ROOT_URLCONF = 'cafe24.urls'
