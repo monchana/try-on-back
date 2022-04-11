@@ -54,7 +54,7 @@ class PartModel(models.Model):
         ('원피스', 'Dress'),
     )
     part = models.CharField(
-        max_length=3, choices=PART_CHOICES, default="하의")
+        max_length=3, choices=PART_CHOICES, default="긴바지")
 
     class Meta:
         abstract = True

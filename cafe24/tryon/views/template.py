@@ -66,6 +66,9 @@ def gen_tryon_models(request):
     return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
+bottom_parts = ["하의", "반바지", "긴바지", "ShortPants", "LongPants"]
+
+
 def generate_tryon(nb_prod_path, product, model_imgs_path, user_info):
     imgdict_list = []
     prod_path = product.image.name.replace(
@@ -76,13 +79,14 @@ def generate_tryon(nb_prod_path, product, model_imgs_path, user_info):
         settings.PRE_DIR, "image")).split(".")[0] + ".jpg", model_imgs_path))
     prod_name = os.path.basename(prod_path).split(".")[0]
 
-    if product.part == '하의':
-        # pdb.set_trace()
+    if product.part in bottom_parts:
+        print("하의 모델 구동 Param: ", product.part)
         res = requests.post(url="http://127.0.0.1:8524", data=json.dumps({
             'dataroot': settings.PRE_DIR, 'models': models_path, 'cloth': prod_path
         }))
 
     else:
+        print("상의 모델 구동 Param: ", product.part)
         res = requests.post(url="http://127.0.0.1:8523", data=json.dumps({
             "cloth": prod_path, "edge": mask_path, "models": models_path, "dest": pjoin(settings.PRE_DIR, "tryon", prod_name)
         }))
@@ -116,7 +120,8 @@ def create_template(request):
     model_urls = TryOnImage.objects.filter(
         pk__in=d['tryon_ids']).values_list("url", flat=True)
     utils = TryOnUtils()
-    htmls = utils.make_html(img_urls=list(map(lambda x: "http://" + x, model_urls)))
+    htmls = utils.make_html(img_urls=list(
+        map(lambda x: "http://" + x, model_urls)))
     template = TemplatePage.objects.create(
         name="test", title="test", part="test", **htmls)
     return Response(data=TemplateModelSerializer(template).data, status=status.HTTP_200_OK)
