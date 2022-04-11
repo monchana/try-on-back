@@ -48,7 +48,8 @@ class GenderModel(models.Model):
 class PartModel(models.Model):
     PART_CHOICES = (
         ('상의', 'Top'),
-        ('하의', 'Bottom'),
+        ('반바지', 'ShortPants'),
+        ('긴바지', 'LongPants'),
         ('아우터', 'Outer'),
         ('원피스', 'Dress'),
     )
