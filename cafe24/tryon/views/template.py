@@ -81,9 +81,14 @@ def generate_tryon(nb_prod_path, product, model_imgs_path, user_info):
 
     if product.part in bottom_parts:
         print("하의 모델 구동 Param: ", product.part)
-        res = requests.post(url="http://127.0.0.1:8524", data=json.dumps({
-            'dataroot': settings.PRE_DIR, 'models': models_path, 'cloth': prod_path
-        }))
+        for mp in models_path:
+            res = requests.post(url="http://127.0.0.1:8524", data=json.dumps({
+                'dataroot': settings.PRE_DIR, 'models': [mp], 'cloth': prod_path
+            }))
+            try_img_path_list = res.json()
+            for i in try_img_path_list:
+                imgdict_list.append(
+                    {"src": i, "dest": f'models/{os.path.basename(nb_prod_path).split(".")[0]}/{os.path.basename(i)}'})
 
     else:
         print("상의 모델 구동 Param: ", product.part)
@@ -91,10 +96,10 @@ def generate_tryon(nb_prod_path, product, model_imgs_path, user_info):
             "cloth": prod_path, "edge": mask_path, "models": models_path, "dest": pjoin(settings.PRE_DIR, "tryon", prod_name)
         }))
 
-    try_img_path_list = res.json()
-    for i in try_img_path_list:
-        imgdict_list.append(
-            {"src": i, "dest": f'models/{os.path.basename(nb_prod_path).split(".")[0]}/{os.path.basename(i)}'})
+        try_img_path_list = res.json()
+        for i in try_img_path_list:
+            imgdict_list.append(
+                {"src": i, "dest": f'models/{os.path.basename(nb_prod_path).split(".")[0]}/{os.path.basename(i)}'})
     imgdict_list.append(
         {"src": nb_prod_path, "dest": f'products/{os.path.basename(nb_prod_path)}'})
     send_image_ftp(imgdict_list, **user_info)
